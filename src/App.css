@@ -1,3 +1,9 @@
+/*
+
+This is all the base styling for the app.
+I went ahead and commented this out as I didn't feel comfortable deleting it
+without everyone's input. 
+
 .counter {
   font-size: 16px;
   padding: 5px 10px;
@@ -182,3 +188,59 @@
     border-right-color: var(--border);
   }
 }
+*/
+
+/*App.jsx Styling Start  by Chase Box ---------------------------*/
+
+/*Basic reset to ensure full height and standard margins */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+
+/*Ensure all contents use border-box */
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+/*This is the whole container for the App.jsx page*/
+.app-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw; 
+  border: 1px solid black; 
+}
+
+/*This holds the list of chat rooms*/
+.sidebar {
+  flex: 0 0 25%;
+  border-right: 1px solid black;
+  padding: 20px;
+  background-color: #ffffff;
+}
+
+/*This hold the entire righthand chat display */
+.main-chat {
+  flex: 1; 
+  display: flex;
+  flex-direction: column;
+}
+
+/*Spacing for the chat; this is also where the chat messages will be shown */
+.chat-messages {
+  flex: 1;
+  padding: 20px;
+}
+
+/*Message input area; this is where a chat box will be created for user input. */
+.message-input {
+  height: 120px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-top: 1px solid black;
+}
+/*App.jsx Styling End by Chase Box ---------------------------*/
