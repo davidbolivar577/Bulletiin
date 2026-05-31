@@ -9,6 +9,7 @@ function App() {
 
   return (
     <>
+    {/*This is start of the main chat room page.*/}
     <div className="app-container">
       <div className="sidebar">
         <h2>Chat Rooms</h2>
@@ -25,6 +26,7 @@ function App() {
         </div>
       </div>
     </div>
+    {/*This is the end of the main chat room page.*/}
     </>
   )
 }
