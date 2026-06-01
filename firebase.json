@@ -7,7 +7,7 @@
   },
   "hosting": {
     "site": "bulletiin",
-    "public": ".",
+    "public": "dist",
     "ignore": [
       "firebase.json",
       "**/.*",
