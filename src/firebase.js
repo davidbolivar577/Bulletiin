@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
+//These keys are client side. Ignore warnings
 const firebaseConfig = {
   apiKey: "AIzaSyAc7Zj3Di-SBHDmjnzmsqPbh_mYg4XIyuk",
   authDomain: "bulletiin--with-tiims.firebaseapp.com",
