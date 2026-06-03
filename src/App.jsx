@@ -48,7 +48,7 @@ function App() {
         <div className="main-chat">
           <div className="chat-messages">
             <h2>Chat Messages/Display</h2>
-            <p>This is display a scrollable list of messages from each user/s.</p>
+            <p>This will display a scrollable list of messages from each user/s.</p>
           </div>
           <div className="message-input">
             <h2>User Input</h2>
