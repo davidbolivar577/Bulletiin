@@ -14,6 +14,11 @@ import './App.css'
 function App() {
   const [count, setCount] = useState(0)
 
+  // Array to hold user messages (This might be changed to database calls later on):
+  const [messages, setMessages] = useState([]);
+  // Current text input by the user:
+  const [messageInput, setMessageInput] = useState("");
+
   //Clear login info
   const [user, setUser] = useState(null) //possibly pull from cookies
   const [loading, setLoading] = useState(true)
@@ -46,14 +51,27 @@ function App() {
           <p>This is where the chat rooms and navigation will be displayed</p>
         </div>
         <div className="main-chat">
+        
+        {/*Chat Display Here: */}
           <div className="chat-messages">
-            <h2>Chat Messages/Display</h2>
-            <p>This will display a scrollable list of messages from each user/s.</p>
+            {messages.map((msg, index) => (
+              <div key = {index} className= "message-bubble">{msg}</div>
+            ))}
           </div>
-          <div className="message-input">
-            <h2>User Input</h2>
-            <p>The chatbox will go here</p>
-          </div>
+          
+          {/*User Input Here: */}
+          <p className = "input-prompt">Type your message below:</p>
+          <form className = "message-input" onSubmit = {(e) => {
+            e.preventDefault();
+            if (messageInput.trim()) {
+              setMessages([...messages, messageInput]); // Adding new message state.
+              setMessageInput(""); // Clears message input after sending.
+            }
+          }}>
+            <input value = {messageInput} onChange = {(e) => setMessageInput(e.target.value)}
+            placeholder = "Enter your message here..."/>
+            <button type = "submit">Send</button>
+          </form>
         </div>
       </div>
       {/*This is the end of the main chat room page.*/}
