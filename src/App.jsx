@@ -6,6 +6,9 @@ import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from './firebase'
 import Login from './components/Login.jsx'
 
+import { db } from "./firebase.js";
+import { collection, addDoc, serverTimestamp, query, orderBy, limitToLast, onSnapshot } from "firebase/firestore";
+
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
@@ -32,6 +35,32 @@ function App() {
     return () => unsubscribe()
   }, [])
 
+  // Firestire listener
+  useEffect(() => {
+    const messagesRef = collection(db, "messages");
+
+    // Message grabbing, and ordering logic
+    const q = query(messagesRef, orderBy("timestamp", "asc"), limitToLast(50));
+
+    // actual listener/refresh function
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const fetchedMessages = [];
+
+      snapshot.forEach((doc) => {
+        // Grab data ALONG WITH DOCUMENT ID (important)
+        fetchedMessages.push({ 
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+
+      // Update and refresh messages
+      setMessages(fetchedMessages);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   //Loading screen
   if (loading) {
     return <div>Loading...</div>
@@ -53,24 +82,43 @@ function App() {
         <div className="main-chat">
         
         {/*Chat Display Here: */}
-          <div className="chat-messages">
-            {messages.map((msg, index) => (
-              <div key = {index} className= "message-bubble">{msg}</div>
-            ))}
-          </div>
+        <div className="chat-messages">
+          {messages.map((msg, index) => (
+            <div key={msg.id} className="message-bubble">
+              {msg.message_content}
+              <div className="sent-by">
+                <i>{msg.username}</i>
+              </div>
+            </div>
+          ))}
+        </div>
           
-          {/*User Input Here: */}
-          <p className = "input-prompt">Type your message below:</p>
-          <form className = "message-input" onSubmit = {(e) => {
+          {/* User Input Here: */}
+          <p className="input-prompt">Type your message below:</p>
+          <form className="message-input" onSubmit={async (e) => {
             e.preventDefault();
+
             if (messageInput.trim()) {
-              setMessages([...messages, messageInput]); // Adding new message state.
-              setMessageInput(""); // Clears message input after sending.
+              try {
+                const messagesRef = collection(db, "messages");
+
+                await addDoc(messagesRef, {
+                  message_content: messageInput,
+                  timestamp: serverTimestamp(),
+                  uid: user.uid,
+                  username: user.displayName || "Unknown"
+                  // Eventually add channel_id or something like that
+                });
+              
+                setMessageInput(""); 
+              } catch (error) {
+                alert("Error sending message to Firestore:", error);
+              }
             }
           }}>
-            <input value = {messageInput} onChange = {(e) => setMessageInput(e.target.value)}
-            placeholder = "Enter your message here..."/>
-            <button type = "submit">Send</button>
+            <input value={messageInput} onChange={(e) => setMessageInput(e.target.value)}
+                   placeholder="Enter your message here..."/>
+            <button type="submit">Send</button>
           </form>
         </div>
       </div>
