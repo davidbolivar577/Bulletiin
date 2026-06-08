@@ -61,6 +61,19 @@ function App() {
     return () => unsubscribe();
   }, []);
 
+  // target lock to null div (bottom of the messages)
+  const messagesEndRef = useRef(null);
+
+  // scroll down function
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+  };
+  
+  // conditions (run it when "messages" changes)
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   //Loading screen
   if (loading) {
     return <div>Loading...</div>
@@ -86,17 +99,22 @@ function App() {
           {messages.map((msg) => {
             // Check who message belongs to
             const isSelf = msg.uid === user.uid;
-          
+
             return (
               // apply proper class (sent or recieved)
-              <div key={msg.id} className={`message-bubble ${isSelf ? "sent" : "received"}`}>
-                {msg.message_content}
+              <div key={msg.id} className={`message-container ${isSelf ? "sent" : "received"}`}>
+                <div className={`message-bubble`}>
+                  {msg.message_content}
+                </div>
                 <div className="sent-by">
-                  <i>{msg.username}</i>
+                    <i>{msg.username}</i>
                 </div>
               </div>
             );
           })}
+          
+          {/* Here's the null target div */}
+          <div ref={messagesEndRef} />
         </div>
           
           {/* User Input Here: */}
