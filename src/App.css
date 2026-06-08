@@ -46,6 +46,7 @@ html, body, #root {
   flex-direction: column;
   gap: 10px;
 }
+
 /*Visual styling for the border of each individual message on the chat display.*/
 .message-bubble {
   background: #e0e0e0;
@@ -53,6 +54,21 @@ html, body, #root {
   padding: 8px;
   border-radius: 5px;
   align-self: flex-start;
+  max-width: 60%;
+}
+
+/* User's messages */
+.message-bubble.sent {
+  align-self: flex-end;
+  background-color: #4ebcff;
+  color: black;
+}
+
+/* Other people's messages */
+.message-bubble.received {
+  align-self: flex-start;
+  background: #8b8b8b;
+  color: black;
 }
 
 /*Message input area; this is where a chat box will be created for user input. */

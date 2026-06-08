@@ -1,6 +1,6 @@
 //npm run build
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from "react";
 
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from './firebase'
@@ -83,14 +83,20 @@ function App() {
         
         {/*Chat Display Here: */}
         <div className="chat-messages">
-          {messages.map((msg, index) => (
-            <div key={msg.id} className="message-bubble">
-              {msg.message_content}
-              <div className="sent-by">
-                <i>{msg.username}</i>
+          {messages.map((msg) => {
+            // Check who message belongs to
+            const isSelf = msg.uid === user.uid;
+          
+            return (
+              // apply proper class (sent or recieved)
+              <div key={msg.id} className={`message-bubble ${isSelf ? "sent" : "received"}`}>
+                {msg.message_content}
+                <div className="sent-by">
+                  <i>{msg.username}</i>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
           
           {/* User Input Here: */}
@@ -112,7 +118,7 @@ function App() {
               
                 setMessageInput(""); 
               } catch (error) {
-                alert("Error sending message to Firestore:", error);
+                alert("Error sending message to Firestore: ", error, " please take a screenshot of this and send it to the development team.");
               }
             }
           }}>
