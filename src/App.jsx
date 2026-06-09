@@ -12,6 +12,7 @@ import { collection, addDoc, serverTimestamp, query, orderBy, limitToLast, onSna
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
+import defaultPfp from './assets/default_pfp.jpg'
 import './App.css'
 
 function App() {
@@ -104,6 +105,7 @@ function App() {
               // apply proper class (sent or recieved)
               <div key={msg.id} className={`message-container ${isSelf ? "sent" : "received"}`}>
                 <div className={`message-bubble`}>
+                  <img src={msg.pfp || defaultPfp} alt={`${msg.username}'s profile picture`} className="pfp"/>
                   {msg.message_content}
                 </div>
                 <div className="sent-by">
@@ -130,7 +132,8 @@ function App() {
                   message_content: messageInput,
                   timestamp: serverTimestamp(),
                   uid: user.uid,
-                  username: user.displayName || "Unknown"
+                  username: user.displayName || "Unknown",
+                  pfp: user.photoURL || ""
                   // Eventually add channel_id or something like that
                 });
               

@@ -67,11 +67,11 @@ html, body, #root {
 
 .message-container.sent .message-bubble:hover {
   transform: scale(1.005) translateX(-2px);
-  box-shadow: 0px 0px 2px #4ef3ff;
+  /* box-shadow: 0px 0px 2px #4ef3ff; */
 }
 .message-container.received .message-bubble:hover {
   transform: scale(1.005) translateX(2px);
-  box-shadow: 0px 0px 2px #ebebeb;
+  /* box-shadow: 0px 0px 2px #ebebeb; */
 }
 
 /* container for the bubble, and username. default styles */
@@ -95,6 +95,14 @@ html, body, #root {
 }
 .message-container.sent .message-bubble {
   background-color: #4ebcff;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+}
+.message-container.sent .pfp {
+  height: 30px;
+  margin: 0px 0px 0px 7px;
+  border-radius: 20px;
 }
 
 /* Other people's messages */
@@ -103,6 +111,14 @@ html, body, #root {
 }
 .message-container.received .message-bubble {
   background-color: #8b8b8b;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.message-container.received .pfp {
+  height: 30px;
+  margin: 0px 7px 0px 0px;
+  border-radius: 20px;
 }
 
 /* the little username tag underneath the bubble */
