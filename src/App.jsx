@@ -97,6 +97,7 @@ function App() {
         
         {/*Chat Display Here: */}
         <div className="chat-messages">
+          {/* TODO change msg.username references to msg.user_id */}
           {messages.map((msg) => {
             // Check who message belongs to
             const isSelf = msg.uid === user.uid;
@@ -137,7 +138,7 @@ function App() {
                   uid: user.uid,
                   username: user.displayName || "Unknown",
                   pfp: user.photoURL || ""
-                  // Eventually add channel_id or something like that
+                  // TODO Eventually add channel_id or something like that
                 });
               
                 setMessageInput(""); 
