@@ -27,6 +27,7 @@ html, body, #root {
   border-right: 1px solid black;
   padding: 20px;
   background-color: #ffffff;
+  height: 100vh;
 }
 
 /*This hold the entire righthand chat display */
@@ -52,7 +53,6 @@ html, body, #root {
 .message-bubble {
   background: #e0e0e0;
   color: black;
-  padding: 8px 12px;
   border-radius: 10px;
   max-width: 60%;
   overflow-wrap: break-word; 
@@ -63,6 +63,13 @@ html, body, #root {
   -webkit-hyphens: auto;
   
   transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.message-container.received .message-bubble {
+  padding: 8px 12px 8px 7px;
+}
+.message-container.sent .message-bubble {
+  padding: 8px 7px 8px 12px;
 }
 
 .message-container.sent .message-bubble:hover {
@@ -101,8 +108,9 @@ html, body, #root {
 }
 .message-container.sent .pfp {
   height: 30px;
-  margin: 0px 0px 0px 7px;
+  margin: 0px 0px 0px 4px;
   border-radius: 20px;
+  flex-shrink: 0;
 }
 
 /* Other people's messages */
@@ -117,8 +125,23 @@ html, body, #root {
 }
 .message-container.received .pfp {
   height: 30px;
-  margin: 0px 7px 0px 0px;
+  margin: 0px 4px 0px 0px;
   border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.message-container.received .message-bar {
+  height: 100%;
+  width: 1px;
+  background-color: #a1a0a0;
+  margin: 0px 4.5px 0px 0px;
+}
+
+.message-container.sent .message-bar {
+  height: 100%;
+  width: 1px;
+  background-color: #80ceff;
+  margin: 0px 0px 0px 4.5px;
 }
 
 /* the little username tag underneath the bubble */
@@ -128,6 +151,11 @@ html, body, #root {
   margin: 5px 0px 0px 0px;
   padding: 0px;
   /* line-height: 5px; */
+}
+
+.message-text {
+  flex: 1;
+  min-width: 0;
 }
 
 /*Message input area; this is where a chat box will be created for user input. */

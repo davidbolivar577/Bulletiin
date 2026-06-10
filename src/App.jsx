@@ -105,8 +105,11 @@ function App() {
               // apply proper class (sent or recieved)
               <div key={msg.id} className={`message-container ${isSelf ? "sent" : "received"}`}>
                 <div className={`message-bubble`}>
-                  <img src={msg.pfp || defaultPfp} alt={`${msg.username}'s profile picture`} className="pfp"/>
-                  {msg.message_content}
+                  <img src={msg.pfp || defaultPfp} alt="profile" className="pfp"/>
+                  <div className="message-bar"></div>
+                  <span className="message-text">
+                    {msg.message_content}
+                  </span>
                 </div>
                 <div className="sent-by">
                     <i>{msg.username}</i>
