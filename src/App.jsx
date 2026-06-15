@@ -26,6 +26,10 @@ function App() {
   // Holds the ID of the clicked message
   const [selectedMessageId, setSelectedMessageId] = useState(null);
 
+  // Editing Messages
+  const [editingMessageId, setEditingMessageId] = useState(null);
+  const [editMessageInput, setEditMessageInput] = useState("");
+
   //Clear login info
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -114,6 +118,19 @@ function App() {
     }
   };
 
+  const updateMessage = async (messageId, newContent) => {
+    try {
+      const messageRef = doc(db, "messages", messageId);
+      await updateDoc(messageRef, {
+        message_content: newContent,
+        // Updates the edited timestamp
+        editedAt: serverTimestamp()
+      });
+    } catch (error) {
+      console.error("Error updating message: ", error);
+    }
+  };
+
   // Message clicked and then prompt for deletion
   const handleDeleteMessage = (messageId) => {
     if (window.confirm("Do you want to delete this message?")) {
@@ -147,24 +164,39 @@ function App() {
                   <div className={`message-bubble`}>
                     <img src={msg.pfp || defaultPfp} alt="profile" className="pfp" />
                     <div className="message-bar"></div>
-                    <span className="message-text">
-                      {msg.message_content}
-                    </span>
+                        <span className="message-text">
+                          {editingMessageId === msg.id ? (
+                            <div className="edit-area">
+                              <input value={editMessageInput} onChange={(e) => setEditMessageInput(e.target.value)} />
+                              <button onClick={(e) => { e.stopPropagation(); updateMessage(msg.id, editMessageInput); setEditingMessageId(null); setEditMessageInput(""); }}>Save</button>
+                              <button onClick={(e) => { e.stopPropagation(); setEditingMessageId(null); setEditMessageInput(""); }}>Cancel</button>
+                            </div>
+                          ) : (
+                            msg.message_content
+                          )}
+                        </span>
                   </div>
                   <div className="sent-by">
                     <i>{msg.username}</i>
-                  </div>
-                  {isSelf && isSelected && (
-                    <button onClick={() => handleDeleteMessage(msg.id)}>Delete</button>
-                  )}
                 </div>
-              );
-            })}
-
-            {/* Here's the null target div */}
-            <div ref={messagesEndRef} />
-          </div>
-
+                     { isSelf && isSelected && (
+                      <div className="message-actions">
+                        {editingMessageId !== msg.id ? (
+                          <>
+                            <button onClick={(e) => { e.stopPropagation(); setEditingMessageId(msg.id); setEditMessageInput(msg.message_content); }}>Edit</button>
+                            <button onClick={(e) => { e.stopPropagation(); handleDeleteMessage(msg.id); }}>Delete</button>
+                          </>
+                        ) : null}
+                      </div>
+                    )}
+              </div>
+            );
+          })}
+          
+          {/* Here's the null target div */}
+          <div ref={messagesEndRef} />
+        </div>
+          
           {/* User Input Here: */}
           <p className="input-prompt">Type your message below:</p>
           <form className="message-input" onSubmit={async (e) => {
