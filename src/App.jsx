@@ -85,6 +85,23 @@ function App() {
     return <Login />
   }
 
+  // Message Delete Function goes here
+  const deleteMessage = async (messageId) => {
+    try {
+      const messageRef = doc(db, "messages", messageId);
+      await deleteDoc(messageRef);
+    } catch (error) {
+      console.error("Error deleting message: ", error);
+    }
+  };
+
+  // Message clicked and then prompt for deletion
+  const handleDeleteMessage = (messageId) => {
+    if (window.confirm("Do you want to delete this message?")){
+      deleteMessage(messageId);
+    }
+  }
+
   return (
     <>
       {/*This is start of the main chat room page.*/}
@@ -115,6 +132,9 @@ function App() {
                 <div className="sent-by">
                     <i>{msg.username}</i>
                 </div>
+                 { isSelf && isSelected && (
+                  <button onClick={() => handleDeleteMessage(msg.id)}>Delete</button>
+                )}
               </div>
             );
           })}
