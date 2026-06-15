@@ -24,7 +24,6 @@ export default function Login() {
           email: user.email,
           displayName: user.displayName,
           avatarUrl: user.photoURL,
-          major: '', 
           createdAt: new Date()
         });
       }
