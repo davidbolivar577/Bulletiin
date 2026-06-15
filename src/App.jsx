@@ -7,7 +7,7 @@ import { auth } from './firebase'
 import Login from './components/Login.jsx'
 
 import { db } from "./firebase.js";
-import { collection, addDoc, serverTimestamp, query, orderBy, limitToLast, onSnapshot } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, query, orderBy, limitToLast, onSnapshot, updateDoc, doc } from "firebase/firestore";
 
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
@@ -101,7 +101,14 @@ function App() {
   const deleteMessage = async (messageId) => {
     try {
       const messageRef = doc(db, "messages", messageId);
-      await deleteDoc(messageRef);
+      
+      await updateDoc(messageRef, {
+        message_content: "Deleted Message",
+        pfp: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Icon-round-Question_mark.svg/3840px-Icon-round-Question_mark.svg.png",
+        timestamp: serverTimestamp(),
+        uid: null,
+        username: "Deleted Message",
+      });
     } catch (error) {
       console.error("Error deleting message: ", error);
     }
@@ -109,7 +116,7 @@ function App() {
 
   // Message clicked and then prompt for deletion
   const handleDeleteMessage = (messageId) => {
-    if (window.confirm("Do you want to delete this message?")){
+    if (window.confirm("Do you want to delete this message?")) {
       deleteMessage(messageId);
     }
   }
@@ -146,18 +153,18 @@ function App() {
                   </div>
                   <div className="sent-by">
                     <i>{msg.username}</i>
+                  </div>
+                  {isSelf && isSelected && (
+                    <button onClick={() => handleDeleteMessage(msg.id)}>Delete</button>
+                  )}
                 </div>
-                 { isSelf && isSelected && (
-                  <button onClick={() => handleDeleteMessage(msg.id)}>Delete</button>
-                )}
-              </div>
-            );
-          })}
-          
-          {/* Here's the null target div */}
-          <div ref={messagesEndRef} />
-        </div>
-          
+              );
+            })}
+
+            {/* Here's the null target div */}
+            <div ref={messagesEndRef} />
+          </div>
+
           {/* User Input Here: */}
           <p className="input-prompt">Type your message below:</p>
           <form className="message-input" onSubmit={async (e) => {
