@@ -18,7 +18,7 @@ import './App.css'
 function App() {
   const [count, setCount] = useState(0)
 
-  // Array to hold user messages (This might be changed to database calls later on):
+  // Array to hold user messages
   const [messages, setMessages] = useState([]);
   // Current text input by the user:
   const [messageInput, setMessageInput] = useState("");
@@ -26,11 +26,19 @@ function App() {
   // Channel state
   const [currentChannelId, setCurrentChannelId] = useState("official1");
 
-  //Clear login info
-  const [user, setUser] = useState(null) //possibly pull from cookies
+  // Holds the ID of the clicked message
+  const [selectedMessageId, setSelectedMessageId] = useState(null);
+
+  // Editing Messages states
+  const [editingMessageId, setEditingMessageId] = useState(null);
+  const [editMessageInput, setEditMessageInput] = useState("");
+
+  // Clear login info
+  const [user, setUser] = useState(null)
   const [dbUser, setDbUser] = useState(null);
   const [loading, setLoading] = useState(true)
 
+  // Auth & Profile Listener
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
@@ -55,7 +63,7 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  // Firestire listener
+  // Firestore messages listener
   useEffect(() => {
     const messagesRef = collection(db, "channels", currentChannelId, "messages");
 
@@ -67,7 +75,7 @@ function App() {
       const fetchedMessages = [];
 
       snapshot.forEach((doc) => {
-        // Grab data ALONG WITH DOCUMENT ID (important)
+        // Grab data ALONG WITH DOCUMENT ID
         fetchedMessages.push({
           id: doc.id,
           ...doc.data()
@@ -116,7 +124,8 @@ function App() {
   // Message Delete Function goes here
   const deleteMessage = async (messageId) => {
     try {
-      const messageRef = doc(db, "messages", messageId);
+      // Fixed: points to the specific channel rather than a root "messages" collection
+      const messageRef = doc(db, "channels", currentChannelId, "messages", messageId);
       
       await updateDoc(messageRef, {
         message_content: "Deleted Message",
@@ -132,7 +141,8 @@ function App() {
 
   const updateMessage = async (messageId, newContent) => {
     try {
-      const messageRef = doc(db, "messages", messageId);
+      // Fixed: points to the specific channel
+      const messageRef = doc(db, "channels", currentChannelId, "messages", messageId);
       await updateDoc(messageRef, {
         message_content: newContent,
         // Updates the edited timestamp
@@ -162,20 +172,30 @@ function App() {
         
         {/*Chat Display Here: */}
         <div className="chat-messages">
-          {/* TODO change msg.username references to msg.user_id */}
           {messages.map((msg) => {
             // Check who message belongs to
             const isSelf = msg.uid === user.uid;
+            
+            // Check if message is selected
+            const isSelected = selectedMessageId === msg.id;
 
             return (
               // apply proper class (sent or recieved)
-              <div key={msg.id} className={`message-container ${isSelf ? "sent" : "received"}`}>
+              <div key={msg.id} className={`message-container ${isSelf ? "sent" : "received"} ${isSelected ? "selected-msg" : ""}`} onClick={() => setSelectedMessageId(isSelected ? null : msg.id)}>
                 <div className={`message-bubble`}>
-                  <img src={msg.pfp || defaultPfp} alt="profile" className="pfp" referrerPolicy="no-referrer"/>
+                  <img src={msg.pfp || defaultPfp} alt="profile" className="pfp" referrerPolicy="no-referrer" />
                   <div className="message-bar"></div>
-                  <span className="message-text">
-                    {msg.message_content}
-                  </span>
+                      <span className="message-text">
+                        {editingMessageId === msg.id ? (
+                          <div className="edit-area">
+                            <input value={editMessageInput} onChange={(e) => setEditMessageInput(e.target.value)} />
+                            <button onClick={(e) => { e.stopPropagation(); updateMessage(msg.id, editMessageInput); setEditingMessageId(null); setEditMessageInput(""); }}>Save</button>
+                            <button onClick={(e) => { e.stopPropagation(); setEditingMessageId(null); setEditMessageInput(""); }}>Cancel</button>
+                          </div>
+                        ) : (
+                          msg.message_content
+                        )}
+                      </span>
                 </div>
                 <div className="sent-by">
                     <i>{msg.username}</i>
@@ -218,7 +238,7 @@ function App() {
 
                 setMessageInput("");
               } catch (error) {
-                alert("Error sending message to Firestore: ", error, " please take a screenshot of this and send it to the development team.");
+                alert("Error sending message to Firestore: " + error + " please take a screenshot of this and send it to the development team.");
               }
             }
           }}>
