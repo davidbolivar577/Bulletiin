@@ -7,7 +7,7 @@ import { auth } from './firebase'
 import Login from './components/Login.jsx'
 
 import { db } from "./firebase.js";
-import { collection, addDoc, serverTimestamp, query, orderBy, limitToLast, onSnapshot } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, query, orderBy, limitToLast, onSnapshot, doc, getDoc } from "firebase/firestore";
 
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
@@ -23,22 +23,41 @@ function App() {
   // Current text input by the user:
   const [messageInput, setMessageInput] = useState("");
 
+  // Channel state
+  const [currentChannelId, setCurrentChannelId] = useState("official1");
+
   //Clear login info
   const [user, setUser] = useState(null) //possibly pull from cookies
+  const [dbUser, setDbUser] = useState(null);
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser)
-      setLoading(false)
-    })
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+
+        const userDocRef = doc(db, "users", currentUser.uid);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists()) {
+          // Save their custom database profile to state
+          setDbUser(userDocSnap.data());
+        } else {
+          console.log("User document not found in database!");
+        }
+      } else {
+        setUser(null);
+        setDbUser(null);
+      }
+      setLoading(false);
+    });
     
-    return () => unsubscribe()
-  }, [])
+    return () => unsubscribe();
+  }, []);
 
   // Firestire listener
   useEffect(() => {
-    const messagesRef = collection(db, "messages");
+    const messagesRef = collection(db, "channels", currentChannelId, "messages");
 
     // Message grabbing, and ordering logic
     const q = query(messagesRef, orderBy("timestamp", "asc"), limitToLast(50));
@@ -60,7 +79,7 @@ function App() {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [currentChannelId]);
 
   // target lock to null div (bottom of the messages)
   const messagesEndRef = useRef(null);
@@ -106,7 +125,7 @@ function App() {
               // apply proper class (sent or recieved)
               <div key={msg.id} className={`message-container ${isSelf ? "sent" : "received"}`}>
                 <div className={`message-bubble`}>
-                  <img src={msg.pfp || defaultPfp} alt="profile" className="pfp"/>
+                  <img src={msg.pfp || defaultPfp} alt="profile" className="pfp" referrerPolicy="no-referrer"/>
                   <div className="message-bar"></div>
                   <span className="message-text">
                     {msg.message_content}
@@ -130,15 +149,15 @@ function App() {
 
             if (messageInput.trim()) {
               try {
-                const messagesRef = collection(db, "messages");
+                const messagesRef = collection(db, "channels", currentChannelId, "messages");
 
                 await addDoc(messagesRef, {
                   message_content: messageInput,
                   timestamp: serverTimestamp(),
-                  uid: user.uid,
-                  username: user.displayName || "Unknown",
-                  pfp: user.photoURL || ""
-                  // TODO Eventually add channel_id or something like that
+                  uid: user.uid, // Keep this as user.uid for security/tracking
+  
+                  username: dbUser?.displayName || "Unknown", 
+                  pfp: dbUser?.avatarUrl || "" 
                 });
               
                 setMessageInput(""); 
