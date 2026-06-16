@@ -182,25 +182,23 @@ function App() {
             return (
               // apply proper class (sent or recieved)
               <div key={msg.id} className={`message-container ${isSelf ? "sent" : "received"} ${isSelected ? "selected-msg" : ""}`} onClick={() => setSelectedMessageId(isSelected ? null : msg.id)}>
-                <div className={`message-bubble`}>
-                  <img src={msg.pfp || defaultPfp} alt="profile" className="pfp" referrerPolicy="no-referrer" />
-                  <div className="message-bar"></div>
-                      <span className="message-text">
-                        {editingMessageId === msg.id ? (
-                          <div className="edit-area">
-                            <input value={editMessageInput} onChange={(e) => setEditMessageInput(e.target.value)} />
-                            <button onClick={(e) => { e.stopPropagation(); updateMessage(msg.id, editMessageInput); setEditingMessageId(null); setEditMessageInput(""); }}>Save</button>
-                            <button onClick={(e) => { e.stopPropagation(); setEditingMessageId(null); setEditMessageInput(""); }}>Cancel</button>
-                          </div>
-                        ) : (
-                          msg.message_content
-                        )}
-                      </span>
-                </div>
-                <div className="sent-by">
-                    <i>{msg.username}</i>
-                </div>
-                     { isSelf && isSelected && (
+                <div className="bubbleAndActions">
+                  <div className={`message-bubble`}>
+                    <img src={msg.pfp || defaultPfp} alt="profile" className="pfp" referrerPolicy="no-referrer" />
+                    <div className="message-bar"></div>
+                        <span className="message-text">
+                          {editingMessageId === msg.id ? (
+                            <div className="edit-area">
+                              <input value={editMessageInput} onChange={(e) => setEditMessageInput(e.target.value)} />
+                              <button onClick={(e) => { e.stopPropagation(); updateMessage(msg.id, editMessageInput); setEditingMessageId(null); setEditMessageInput(""); }}>Save</button>
+                              <button onClick={(e) => { e.stopPropagation(); setEditingMessageId(null); setEditMessageInput(""); }}>Cancel</button>
+                            </div>
+                          ) : (
+                            msg.message_content
+                          )}
+                        </span>
+                  </div>
+                  { isSelf && isSelected && (
                       <div className="message-actions">
                         {editingMessageId !== msg.id ? (
                           <>
@@ -210,6 +208,12 @@ function App() {
                         ) : null}
                       </div>
                     )}
+                </div>
+                
+                <div className="sent-by">
+                    <i>{msg.username}</i>
+                </div>
+                     
               </div>
             );
           })}

@@ -72,13 +72,34 @@ html, body, #root {
   padding: 8px 7px 8px 12px;
 }
 
+.message-actions {
+  display: flex;
+  gap: 2px;
+  transition: transform 0.1s ease;
+}
+
+.message-actions * {
+  transition: transform 0.1s ease, margin 0.15s ease;
+}
+.message-actions *:hover {
+  transform: scale(1.05);
+  margin: 4px;
+}
+
 .message-container.sent .message-bubble:hover {
   transform: scale(1.005) translateX(-2px);
   /* box-shadow: 0px 0px 2px #4ef3ff; */
 }
+.message-container.sent .message-bubble:hover ~ .message-actions {
+  transform: scale(1.005) translateX(-2px);
+}
+
 .message-container.received .message-bubble:hover {
   transform: scale(1.005) translateX(2px);
   /* box-shadow: 0px 0px 2px #ebebeb; */
+  .message-actions {
+    transform: scale(1.005) translateX(-2px);
+  }
 }
 
 /* container for the bubble, and username. default styles */
@@ -142,6 +163,18 @@ html, body, #root {
   width: 1px;
   background-color: #80ceff;
   margin: 0px 0px 0px 4.5px;
+}
+
+.bubbleAndActions {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  width: 100%;
+  gap: 5px;
+}
+
+.message-container.received .bubbleAndActions {
+  flex-direction: row;
 }
 
 /* the little username tag underneath the bubble */
