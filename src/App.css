@@ -1,3 +1,11 @@
+
+/* .figtree-<uniquifier> {
+  font-family: "Figtree", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: <weight>;
+  font-style: normal;
+} */
+
 /*Basic reset to ensure full height and standard margins */
 html, body, #root {
   margin: 0;
@@ -6,6 +14,10 @@ html, body, #root {
   width: 100%;
   box-sizing: border-box;
   font-family: sans-serif;
+}
+
+button {
+  font-family: Figtree, sans-serif;
 }
 
 /*Ensure all contents use border-box */
@@ -61,6 +73,9 @@ html, body, #root {
   word-break: break-word;
   hyphens: auto;
   -webkit-hyphens: auto;
+  overflow: hidden;
+  display: flex;
+  align-items: stretch;
   
   transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
@@ -125,7 +140,7 @@ html, body, #root {
   background-color: #4ebcff;
   display: flex;
   flex-direction: row-reverse;
-  align-items: center;
+  /* align-items: center; */
 }
 .message-container.sent .pfp {
   height: 30px;
@@ -142,7 +157,7 @@ html, body, #root {
   background-color: #8b8b8b;
   display: flex;
   flex-direction: row;
-  align-items: center;
+  /* align-items: center; */
 }
 .message-container.received .pfp {
   height: 30px;
@@ -152,14 +167,14 @@ html, body, #root {
 }
 
 .message-container.received .message-bar {
-  height: 100%;
+  /* height: 100%; */
   width: 1px;
   background-color: #a1a0a0;
   margin: 0px 4.5px 0px 0px;
 }
 
 .message-container.sent .message-bar {
-  height: 100%;
+  /* height: 100%; */
   width: 1px;
   background-color: #80ceff;
   margin: 0px 0px 0px 4.5px;
@@ -190,6 +205,9 @@ html, body, #root {
   flex: 1;
   min-width: 0;
   overflow: hidden;
+
+  display: flex;
+  align-items: center;
 }
 
 /*Message input area; this is where a chat box will be created for user input. */
@@ -270,4 +288,61 @@ html, body, #root {
 
 .room-card.active .room-name {
   color: #2d7df4;
+}
+
+/* --- MOBILE MENU STYLES --- */
+
+.mobile-header {
+  display: none;
+  background-color: #ececec;
+  padding: 10px 20px;
+  border-bottom: 1px solid #a0a0a0;
+}
+
+.hamburger-btn {
+  background: none;
+  border: 1px solid #a0a0a0;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: #333;
+  transition: background 0.2s;
+}
+
+.hamburger-btn:hover {
+  background: #d4d4d4;
+}
+
+@media (max-width: 700px) {
+  /* Show the header with the hamburger button */
+  .mobile-header {
+    display: flex;
+    align-items: center;
+  }
+
+  /* Disconnect the sidebar from the normal flow so it floats over the chat */
+  .sidebar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1000; /* Ensures it stays on top of messages */
+    height: 100vh;
+    box-shadow: 4px 0px 10px rgba(0, 0, 0, 0.3); /* Adds a nice drop shadow */
+    
+    /* Slide it off the screen to the left by default */
+    transform: translateX(-100%); 
+    transition: transform 0.3s ease-in-out;
+  }
+
+  /* When React adds the "mobile-open" class, slide it back onto the screen */
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  /* Prevent the chat messages from getting hidden under the new header */
+  .main-chat {
+    width: 100%; /* Take up the full screen when sidebar is hidden */
+  }
 }

@@ -18,6 +18,9 @@ import './App.css'
 function App() {
   const [count, setCount] = useState(0)
 
+  // Mobile sidebar toggle state
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   // Array to hold user messages
   const [messages, setMessages] = useState([]);
   // Current text input by the user:
@@ -182,24 +185,24 @@ function App() {
 
   return (
     <>
-      {/*This is start of the main chat room page.*/}
       <div className="app-container">
-        <div className="sidebar">
+        {/* dynamic sidebar class (open or close for mobile) */}
+        <div className={`sidebar ${isSidebarOpen ? "mobile-open" : ""}`}>
           <h2 className="sidebar-title">Chat Rooms</h2>
 
           <div className="room-list">
             {chatRooms.map((room) => (
               <button
                 key={room.id}
-                className={`room-card ${
-                  activeRoom === room.id ? "active" : ""
-                }`}
-                onClick={() => setActiveRoom(room.id)}
+                className={`room-card ${activeRoom === room.id ? "active" : ""}`}
+                onClick={() => {
+                  setActiveRoom(room.id);
+                  setIsSidebarOpen(false); // Closes menu automatically when a room is clicked
+                }}
               >
                 <div className="room-preview">
                   <img src={room.preview} alt={room.name} />
                 </div>
-
                 <p className="room-name">{room.name}</p>
               </button>
             ))}
@@ -209,6 +212,16 @@ function App() {
       {/* Main Chat Area */}
       <div className="main-chat">
         
+        {/* Hamburger menu button for mobile */}
+        <div className="mobile-header">
+          <button 
+            className="hamburger-btn" 
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          >
+            ☰ Channels
+          </button>
+        </div>
+
         {/*Chat Display Here: */}
         <div className="chat-messages">
           {messages.map((msg) => {
