@@ -23,10 +23,10 @@ function App() {
   // Current text input by the user:
   const [messageInput, setMessageInput] = useState("");
   // User switching chatrooms
-  const [activeRoom, setActiveRoom] = useState("general");
+  const [activeRoom, setActiveRoom] = useState("official1");
 
   // Channel state
-  const [currentChannelId, setCurrentChannelId] = useState("official1");
+  // const [currentChannelId, setCurrentChannelId] = useState("official1");
 
   // Holds the ID of the clicked message
   const [selectedMessageId, setSelectedMessageId] = useState(null);
@@ -67,7 +67,7 @@ function App() {
 
   // Firestore messages listener
   useEffect(() => {
-    const messagesRef = collection(db, "chatrooms", activeRoom, "messages");
+    const messagesRef = collection(db, "channels", activeRoom, "messages");
 
     // Message grabbing, and ordering logic
     const q = query(messagesRef, orderBy("timestamp", "asc"), limitToLast(50));
@@ -93,7 +93,7 @@ function App() {
 
   const chatRooms = [
     {
-      id: "general",
+      id: "official1",
       name: "General Chat",
       preview: "/room-preview-1.jpg",
     },
@@ -145,7 +145,7 @@ function App() {
   const deleteMessage = async (messageId) => {
     try {
       // Fixed: points to the specific channel rather than a root "messages" collection
-      const messageRef = doc(db, "channels", currentChannelId, "messages", messageId);
+      const messageRef = doc(db, "channels", activeRoom, "messages", messageId);
       
       await updateDoc(messageRef, {
         message_content: "Deleted Message",
@@ -162,7 +162,7 @@ function App() {
   const updateMessage = async (messageId, newContent) => {
     try {
       // Fixed: points to the specific channel
-      const messageRef = doc(db, "channels", currentChannelId, "messages", messageId);
+      const messageRef = doc(db, "channels", activeRoom, "messages", messageId);
       await updateDoc(messageRef, {
         message_content: newContent,
         // Updates the edited timestamp
@@ -268,7 +268,7 @@ function App() {
 
             if (messageInput.trim()) {
               try {
-                const messagesRef = collection(db, "channels", currentChannelId, "messages");
+                const messagesRef = collection(db, "channels", activeRoom, "messages");
 
                 await addDoc(messagesRef, {
                   message_content: messageInput,
