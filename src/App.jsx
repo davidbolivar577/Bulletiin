@@ -2,12 +2,12 @@
 
 import { useState, useEffect, useRef } from "react";
 
-import { onAuthStateChanged } from 'firebase/auth'
+import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { auth } from './firebase'
 import Login from './components/Login.jsx'
 
 import { db } from "./firebase.js";
-import { collection, addDoc, serverTimestamp, query, orderBy, limitToLast, onSnapshot, doc, getDoc } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, query, orderBy, limitToLast, onSnapshot, doc, getDoc, updateDoc } from "firebase/firestore";
 
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
@@ -68,7 +68,7 @@ function App() {
 
       snapshot.forEach((doc) => {
         // Grab data ALONG WITH DOCUMENT ID (important)
-        fetchedMessages.push({ 
+        fetchedMessages.push({
           id: doc.id,
           ...doc.data()
         });
@@ -88,11 +88,20 @@ function App() {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
   };
-  
+
   // conditions (run it when "messages" changes)
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      console.log("User successfully logged out");
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
 
   //Loading screen
   if (loading) {
@@ -102,6 +111,43 @@ function App() {
   //Login screen
   if (!user) {
     return <Login />
+  }
+
+  // Message Delete Function goes here
+  const deleteMessage = async (messageId) => {
+    try {
+      const messageRef = doc(db, "messages", messageId);
+      
+      await updateDoc(messageRef, {
+        message_content: "Deleted Message",
+        pfp: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Icon-round-Question_mark.svg/3840px-Icon-round-Question_mark.svg.png",
+        timestamp: serverTimestamp(),
+        uid: null,
+        username: "Deleted Message",
+      });
+    } catch (error) {
+      console.error("Error deleting message: ", error);
+    }
+  };
+
+  const updateMessage = async (messageId, newContent) => {
+    try {
+      const messageRef = doc(db, "messages", messageId);
+      await updateDoc(messageRef, {
+        message_content: newContent,
+        // Updates the edited timestamp
+        editedAt: serverTimestamp()
+      });
+    } catch (error) {
+      console.error("Error updating message: ", error);
+    }
+  };
+
+  // Message clicked and then prompt for deletion
+  const handleDeleteMessage = (messageId) => {
+    if (window.confirm("Do you want to delete this message?")) {
+      deleteMessage(messageId);
+    }
   }
 
   return (
@@ -134,6 +180,16 @@ function App() {
                 <div className="sent-by">
                     <i>{msg.username}</i>
                 </div>
+                     { isSelf && isSelected && (
+                      <div className="message-actions">
+                        {editingMessageId !== msg.id ? (
+                          <>
+                            <button onClick={(e) => { e.stopPropagation(); setEditingMessageId(msg.id); setEditMessageInput(msg.message_content); }}>Edit</button>
+                            <button onClick={(e) => { e.stopPropagation(); handleDeleteMessage(msg.id); }}>Delete</button>
+                          </>
+                        ) : null}
+                      </div>
+                    )}
               </div>
             );
           })}
@@ -159,15 +215,15 @@ function App() {
                   username: dbUser?.displayName || "Unknown", 
                   pfp: dbUser?.avatarUrl || "" 
                 });
-              
-                setMessageInput(""); 
+
+                setMessageInput("");
               } catch (error) {
                 alert("Error sending message to Firestore: ", error, " please take a screenshot of this and send it to the development team.");
               }
             }
           }}>
             <input value={messageInput} onChange={(e) => setMessageInput(e.target.value)}
-                   placeholder="Enter your message here..."/>
+              placeholder="Enter your message here..." />
             <button type="submit">Send</button>
           </form>
         </div>
