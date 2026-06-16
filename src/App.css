@@ -75,7 +75,7 @@ button {
   -webkit-hyphens: auto;
   overflow: hidden;
   display: flex;
-  align-items: stretch;
+  align-items: center;
   
   transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
@@ -178,6 +178,9 @@ button {
   width: 1px;
   background-color: #80ceff;
   margin: 0px 0px 0px 4.5px;
+}
+.message-bar {
+  align-self: stretch;
 }
 
 .bubbleAndActions {
