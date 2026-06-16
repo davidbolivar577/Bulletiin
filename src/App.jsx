@@ -22,6 +22,8 @@ function App() {
   const [messages, setMessages] = useState([]);
   // Current text input by the user:
   const [messageInput, setMessageInput] = useState("");
+  // User switching chatrooms
+  const [activeRoom, setActiveRoom] = useState("general");
 
   // Channel state
   const [currentChannelId, setCurrentChannelId] = useState("official1");
@@ -65,7 +67,7 @@ function App() {
 
   // Firestore messages listener
   useEffect(() => {
-    const messagesRef = collection(db, "channels", currentChannelId, "messages");
+    const messagesRef = collection(db, "chatrooms", activeRoom, "messages");
 
     // Message grabbing, and ordering logic
     const q = query(messagesRef, orderBy("timestamp", "asc"), limitToLast(50));
@@ -87,7 +89,25 @@ function App() {
     });
 
     return () => unsubscribe();
-  }, [currentChannelId]);
+  }, [activeRoom]);
+
+  const chatRooms = [
+    {
+      id: "general",
+      name: "General Chat",
+      preview: "/room-preview-1.jpg",
+    },
+    {
+      id: "class",
+      name: "CSE-310",
+      preview: "/room-preview-2.jpg",
+    },
+    {
+      id: "coding",
+      name: "Coding Help",
+      preview: "/room-preview-3.jpg",
+    },
+  ];
 
   // target lock to null div (bottom of the messages)
   const messagesEndRef = useRef(null);
@@ -165,10 +185,29 @@ function App() {
       {/*This is start of the main chat room page.*/}
       <div className="app-container">
         <div className="sidebar">
-          <h2>Chat Rooms</h2>
-          <p>This is where the chat rooms and navigation will be displayed</p>
+          <h2 className="sidebar-title">Chat Rooms</h2>
+
+          <div className="room-list">
+            {chatRooms.map((room) => (
+              <button
+                key={room.id}
+                className={`room-card ${
+                  activeRoom === room.id ? "active" : ""
+                }`}
+                onClick={() => setActiveRoom(room.id)}
+              >
+                <div className="room-preview">
+                  <img src={room.preview} alt={room.name} />
+                </div>
+
+                <p className="room-name">{room.name}</p>
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="main-chat">
+
+      {/* Main Chat Area */}
+      <div className="main-chat">
         
         {/*Chat Display Here: */}
         <div className="chat-messages">
