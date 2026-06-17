@@ -296,8 +296,8 @@ function App() {
                   message_content: messageInput,
                   timestamp: serverTimestamp(),
                   uid: user.uid,
-                  username: dbUser?.displayName || "Unknown",
-                  pfp: dbUser?.avatarUrl || ""
+                  username: dbUser?.displayName || user.displayName || "Unknown",
+                  pfp: dbUser?.avatarUrl || user.photoURL || ""
                 });
 
                 // parent channel
