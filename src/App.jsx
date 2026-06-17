@@ -155,15 +155,13 @@ function App() {
   // Message Delete Function goes here
   const deleteMessage = async (messageId) => {
     try {
-      // Fixed: points to the specific channel rather than a root "messages" collection
       const messageRef = doc(db, "channels", activeRoom, "messages", messageId);
 
       await updateDoc(messageRef, {
         message_content: "Deleted Message",
         pfp: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Icon-round-Question_mark.svg/3840px-Icon-round-Question_mark.svg.png",
-        timestamp: serverTimestamp(),
-        uid: null,
         username: "Deleted Message",
+        editedAt: serverTimestamp()
       });
     } catch (error) {
       console.error("Error deleting message: ", error);
