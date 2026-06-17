@@ -13,6 +13,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import defaultPfp from './assets/default_pfp.jpg'
+import sendButton from './assets/send_button.svg'
 import './App.css'
 
 function App() {
@@ -301,7 +302,7 @@ function App() {
             <div className="inputAndButton">
               <input value={messageInput} onChange={(e) => setMessageInput(e.target.value)}
                 placeholder="Enter your message here..." />
-              <button type="submit">&gt;</button>
+              <button type="submit"><img src={sendButton}></img></button>
             </div>
           </form>
         </div>
