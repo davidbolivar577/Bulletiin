@@ -298,9 +298,11 @@ function App() {
               }
             }
           }}>
-            <input value={messageInput} onChange={(e) => setMessageInput(e.target.value)}
-              placeholder="Enter your message here..." />
-            <button type="submit">Send</button>
+            <div className="inputAndButton">
+              <input value={messageInput} onChange={(e) => setMessageInput(e.target.value)}
+                placeholder="Enter your message here..." />
+              <button type="submit">&gt;</button>
+            </div>
           </form>
         </div>
       </div>

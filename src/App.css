@@ -78,6 +78,7 @@ button {
   overflow: hidden;
   display: flex;
   align-items: center;
+  z-index: 10;
   
   transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
@@ -93,10 +94,24 @@ button {
   display: flex;
   gap: 2px;
   transition: transform 0.1s ease;
+  animation: slideIn 0.1s ease;
+}
+@keyframes slideIn {
+  from {
+    transform: translateX(110%);
+    /* opacity: 0; */
+  }
+  to {
+    transform: translateX(0);
+    /* opacity: 1; */
+  }
 }
 
 .message-actions * {
   transition: transform 0.1s ease, margin 0.15s ease;
+  padding: 5px;
+  border-radius: 20px;
+  border: 1px solid rgb(92, 92, 92);
 }
 .message-actions *:hover {
   transform: scale(1.05);
@@ -221,6 +236,9 @@ button {
   padding: 20px;
   background-color: #ececec;
   border-top: 1px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .app-container {
@@ -294,6 +312,66 @@ button {
 .room-card.active .room-name {
   color: #2d7df4;
 }
+
+/* ---------------------------------- */
+/* v MESSAGE INPUT AND SEND BUTTON v  */
+/* ---------------------------------- */
+
+.inputAndButton {
+    width: 65%;
+    display: flex;
+    /* align-items: center; */
+    justify-content: center;
+    height: 50%;
+    /* background-color: blue; */
+    /* align-self: stretch; */
+    /* border-radius: 1000px; */
+    /* overflow: hidden; */
+  }
+
+  .inputAndButton input {
+    width: 65%;
+    padding-left: 17px;
+    border-radius: 100px 0px 0px 100px;
+    /* font-size: x-large; */
+    text-align: start;
+    /* text-justify:initial; */
+    /* text-wrap: true; */
+    background-color: #ffff;
+    color: black;
+    z-index: 10;
+    border-right: none;
+
+    transition: box-shadow 0.1s ease, border 0.1s ease, color 0.1s ease;
+  }
+  .inputAndButton button {
+    width: 10%;
+    border-radius: 0px 100px 100px 0px;
+    font-size: xx-large;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-right: 6px;
+
+    transition: box-shadow 0.1s ease, border 0.1s ease;
+  }
+
+  .inputAndButton input:focus {
+    box-shadow: 0px 0px 10px black;
+    border: 2px solid rgb(47, 255, 141);
+    border-right: none;
+    outline: none;
+    color: #9b9b9b;
+  }
+  .inputAndButton input:focus ~ button{
+    box-shadow: 0px 0px 10px black;
+    border: 2px solid rgb(47, 255, 141);
+    /* border-left: 2px solid #ffffff; */
+  }
+
+/* ---------------------------------- */
+/* ^ MESSAGE INPUT AND SEND BUTTON ^  */
+/* ---------------------------------- */
 
 /* --- MOBILE MENU STYLES --- */
 
