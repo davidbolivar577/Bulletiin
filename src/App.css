@@ -59,7 +59,7 @@ button {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  /* gap: 10px; */
   flex-grow: 1;
 }
 
@@ -142,6 +142,12 @@ button {
   width: 100%;
   /* height: 100%; */
   text-align: left;
+  /* gap: 0px; */
+  
+}
+.message-container * {
+  margin: 0px;
+  padding: 0px;
 }
 
 /* pushed first message down so messages appear to send from the bottom, up */
@@ -228,6 +234,21 @@ button {
 
   display: flex;
   align-items: center;
+}
+
+.message-container:not(.last-in-string) i {
+  display: none;
+}
+.message-container.last-in-string {
+  /* line-height: 1px; */
+  /* margin: 0px; */
+  /* padding: 0px; */
+  margin-bottom: 15px;
+}
+.message-container.last-in-string .sent-by {
+  /* line-height: 1px; */
+  margin: 0px;
+  padding: 0px;
 }
 
 /*Message input area; this is where a chat box will be created for user input. */
