@@ -316,8 +316,11 @@ function App() {
           <div className="inputAndButton">
             <input value={messageInput} onChange={(e) => setMessageInput(e.target.value)}
               placeholder="Enter your message here..." />
-            <button type="submit">send;</button>
+            <button type="submit">send</button>
           </div>
+          <form>
+            <button className="LogoutButton" onClick={handleLogout}>Logout</button>
+          </form>
         </form>
       </div>
     </div>
@@ -326,4 +329,6 @@ function App() {
   )
 }
 
+
+//force rebuild
 export default App
