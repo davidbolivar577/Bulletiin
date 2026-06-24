@@ -152,7 +152,8 @@ function App() {
         message_content: "Deleted Message",
         pfp: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Icon-round-Question_mark.svg/3840px-Icon-round-Question_mark.svg.png",
         username: "Deleted Message",
-        editedAt: serverTimestamp()
+        editedAt: serverTimestamp(),
+        uid: null
       });
     } catch (error) {
       console.error("Error deleting message: ", error);
