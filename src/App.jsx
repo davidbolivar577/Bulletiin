@@ -311,14 +311,14 @@ function App() {
             } catch (error) {
               alert("Error sending message: " + error);
             }
-          }
-        }}>
-          <div className="inputAndButton">
-            <input value={messageInput} onChange={(e) => setMessageInput(e.target.value)}
-              placeholder="Enter your message here..." />
-            <button type="submit">&gt;</button>
-          </div>
-        </form>
+          }}>
+            <div className="inputAndButton">
+              <input value={messageInput} onChange={(e) => setMessageInput(e.target.value)}
+                placeholder="Enter your message here..." />
+              <button type="submit">send</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
     {/*This is the end of the main chat room page.*/}
