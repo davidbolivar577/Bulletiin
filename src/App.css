@@ -450,3 +450,18 @@ button {
     width: 100%; /* Take up the full screen when sidebar is hidden */
   }
 }
+
+/*Logout Button Styles*/
+.LogoutButton {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.LogoutButton:hover {
+  background-color: #ff1a1a;
+  
+}

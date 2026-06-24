@@ -318,6 +318,9 @@ function App() {
               placeholder="Enter your message here..." />
             <button type="submit">&gt;</button>
           </div>
+          <form>
+            <button className="LogoutButton" onClick={handleLogout}>Logout</button>
+          </form>
         </form>
       </div>
     </div>
