@@ -337,13 +337,18 @@ button {
 /* ---------------------------------- */
 /* v MESSAGE INPUT AND SEND BUTTON v  */
 /* ---------------------------------- */
+.message-input {
+  background-image: linear-gradient(to bottom, white, lightgreen);
+}
 
 .inputAndButton {
     width: 65%;
+    width: 100%;
     display: flex;
     /* align-items: center; */
     justify-content: center;
     height: 50%;
+    /*background-image: linear-gradient(to bottom, white, green);*/
     /* background-color: blue; */
     /* align-self: stretch; */
     /* border-radius: 1000px; */
@@ -352,32 +357,55 @@ button {
 
   .inputAndButton input {
     width: 65%;
+    width: 85%;
+    height: fill;
     padding-left: 17px;
     border-radius: 100px 0px 0px 100px;
+    border-radius: 10px;
     /* font-size: x-large; */
     text-align: start;
+    border-style: solid;
+    border-width: 5px;
+    border-color: #454148ff;
     /* text-justify:initial; */
     /* text-wrap: true; */
     background-color: #ffff;
+    /*background-color: #ffff;*/
     color: black;
     z-index: 10;
     border-right: none;
+    opacity: 75%;
 
     transition: box-shadow 0.1s ease, border 0.1s ease, color 0.1s ease;
   }
   .inputAndButton button {
     width: 10%;
     border-radius: 0px 100px 100px 0px;
+    width: 15%;
+    border-radius: 10px;
     font-size: xx-large;
     display: flex;
     align-items: center;
     justify-content: center;
     padding-right: 6px;
 
+    border-style: solid;
+    border-width: 5px;
+    border-color: #454148ff;
+    color: white;
+    opacity: 60%;
+    background-image: linear-gradient(to top, gray, white);
+    -webkit-text-stroke: 8px #454148ff;
+    paint-order: stroke fill;
     transition: box-shadow 0.1s ease, border 0.1s ease;
   }
 
   .inputAndButton input:focus {
+  .inputAndButton button:active {
+    background-image: linear-gradient(to bottom, gray, white);
+        border-color: black;
+  }
+  /*&.inputAndButton input:focus {
     box-shadow: 0px 0px 10px black;
     border: 2px solid rgb(47, 255, 141);
     border-right: none;
@@ -390,6 +418,8 @@ button {
     /* border-left: 2px solid #ffffff; */
   }
 
+    /* border-left: 2px solid #ffffff; */
+ /* }*/
 /* ---------------------------------- */
 /* ^ MESSAGE INPUT AND SEND BUTTON ^  */
 /* ---------------------------------- */
