@@ -7,7 +7,7 @@ import { auth } from './firebase'
 import Login from './components/Login.jsx'
 
 import { db } from "./firebase.js";
-import { collection, addDoc, serverTimestamp, query, orderBy, limitToLast, onSnapshot, doc, getDoc, updateDoc } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, query, orderBy, limitToLast, onSnapshot, doc, getDoc, updateDoc, writeBatch } from "firebase/firestore";
 
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
@@ -28,9 +28,6 @@ function App() {
   // User switching chatrooms
   const [activeRoom, setActiveRoom] = useState("official1");
 
-  // Channel state
-  // const [currentChannelId, setCurrentChannelId] = useState("official1");
-
   // Holds the ID of the clicked message
   const [selectedMessageId, setSelectedMessageId] = useState(null);
 
@@ -42,6 +39,8 @@ function App() {
   const [user, setUser] = useState(null)
   const [dbUser, setDbUser] = useState(null);
   const [loading, setLoading] = useState(true)
+
+  const [chatRooms, setChatRooms] = useState([]);
 
   // Auth & Profile Listener
   useEffect(() => {
@@ -94,23 +93,23 @@ function App() {
     return () => unsubscribe();
   }, [activeRoom]);
 
-  const chatRooms = [
-    {
-      id: "official1",
-      name: "General Chat",
-      preview: "/room-preview-1.jpg",
-    },
-    {
-      id: "class",
-      name: "CSE-310",
-      preview: "/room-preview-2.jpg",
-    },
-    {
-      id: "coding",
-      name: "Coding Help",
-      preview: "/room-preview-3.jpg",
-    },
-  ];
+  useEffect(() => {
+    const channelsRef = collection(db, "channels");
+    const channelsQuery = query(channelsRef, orderBy("official", "desc"), orderBy("last_message_at", "desc"));
+
+    const unsubscribe = onSnapshot(channelsQuery, (snapshot) => {
+      const fetchedChannels = [];
+      snapshot.forEach((doc) => {
+        fetchedChannels.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+      setChatRooms(fetchedChannels);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   // target lock to null div (bottom of the messages)
   const messagesEndRef = useRef(null);
@@ -147,15 +146,13 @@ function App() {
   // Message Delete Function goes here
   const deleteMessage = async (messageId) => {
     try {
-      // Fixed: points to the specific channel rather than a root "messages" collection
       const messageRef = doc(db, "channels", activeRoom, "messages", messageId);
       
       await updateDoc(messageRef, {
         message_content: "Deleted Message",
         pfp: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Icon-round-Question_mark.svg/3840px-Icon-round-Question_mark.svg.png",
-        timestamp: serverTimestamp(),
-        uid: null,
         username: "Deleted Message",
+        editedAt: serverTimestamp()
       });
     } catch (error) {
       console.error("Error deleting message: ", error);
@@ -280,39 +277,50 @@ function App() {
           <div ref={messagesEndRef} />
         </div>
           
-          {/* User Input Here: */}
-          <p className="input-prompt">Type your message below:</p>
-          <form className="message-input" onSubmit={async (e) => {
-            e.preventDefault();
+        {/* User Input Here: */}
+        <p className="input-prompt">Type your message below:</p>
+        <form className="message-input" onSubmit={async (e) => {
+          e.preventDefault();
 
-            if (messageInput.trim()) {
-              try {
-                const messagesRef = collection(db, "channels", activeRoom, "messages");
+          if (messageInput.trim()) {
+            try {
+              const batch = writeBatch(db);
 
-                await addDoc(messagesRef, {
-                  message_content: messageInput,
-                  timestamp: serverTimestamp(),
-                  uid: user.uid, // Keep this as user.uid for security/tracking
-  
-                  username: dbUser?.displayName || "Unknown", 
-                  pfp: dbUser?.avatarUrl || "" 
-                });
+              const messagesRef = collection(db, "channels", activeRoom, "messages");
+              const newMessageRef = doc(messagesRef);
 
-                setMessageInput("");
-              } catch (error) {
-                alert("Error sending message to Firestore: " + error + " please take a screenshot of this and send it to the development team.");
-              }
+              batch.set(newMessageRef, {
+                message_content: messageInput,
+                timestamp: serverTimestamp(),
+                uid: user.uid,
+                username: dbUser?.displayName || user.displayName || "Unknown",
+                pfp: dbUser?.avatarUrl || user.photoURL || ""
+              });
+
+              // parent channel
+              const channelRef = doc(db, "channels", activeRoom);
+
+              batch.update(channelRef, {
+                last_message_at: serverTimestamp()
+              });
+
+              await batch.commit();
+
+              setMessageInput("");
+            } catch (error) {
+              alert("Error sending message: " + error);
             }
-          }}>
-            <div className="inputAndButton">
-              <input value={messageInput} onChange={(e) => setMessageInput(e.target.value)}
-                placeholder="Enter your message here..." />
-              <button type="submit">&gt;</button>
-            </div>
-          </form>
-        </div>
+          }
+        }}>
+          <div className="inputAndButton">
+            <input value={messageInput} onChange={(e) => setMessageInput(e.target.value)}
+              placeholder="Enter your message here..." />
+            <button type="submit">&gt;</button>
+          </div>
+        </form>
       </div>
-      {/*This is the end of the main chat room page.*/}
+    </div>
+    {/*This is the end of the main chat room page.*/}
     </>
   )
 }
