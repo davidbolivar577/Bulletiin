@@ -318,7 +318,7 @@ function App() {
               placeholder="Enter your message here..." />
             <button type="submit">send</button>
           </div>
-          <form>
+          <form className="logout-form" onSubmit={(e) => { e.preventDefault(); handleLogout(); }}>
             <button className="LogoutButton" onClick={handleLogout}>Logout</button>
           </form>
         </form>

@@ -482,16 +482,27 @@ button {
 }
 
 /*Logout Button Styles*/
+.logout-form {
+  justify-self: end;
+  align-self: end;
+  justify-content: flex-end;
+  justify-items: auto;
+}
+
 .LogoutButton {
-  background-color: #ff4d4d;
+  background-color: #82a77e;
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.1s ease;
 }
 .LogoutButton:hover {
-  background-color: #ff1a1a;
-  
+  background-color: #c2f54a;
 }
