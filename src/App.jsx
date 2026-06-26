@@ -1,5 +1,3 @@
-//npm run build
-
 import { useState, useEffect, useRef } from "react";
 
 import { onAuthStateChanged, signOut } from 'firebase/auth'
