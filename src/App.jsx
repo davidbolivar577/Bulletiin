@@ -69,6 +69,7 @@ function App() {
 
   // Firestore messages listener
   useEffect(() => {
+    if (!user) return;
     const messagesRef = collection(db, "channels", activeRoom, "messages");
 
     // Message grabbing, and ordering logic
@@ -91,11 +92,22 @@ function App() {
     });
 
     return () => unsubscribe();
-  }, [activeRoom]);
+  }, [activeRoom, user]);
 
   useEffect(() => {
+    if (!user) return;
+
     const channelsRef = collection(db, "channels");
-    const channelsQuery = query(channelsRef, orderBy("official", "desc"), orderBy("last_message_at", "desc"));
+    
+    const channelsQuery = query(
+      channelsRef, 
+      or(
+        where("isPublic", "==", true),
+        where("allowedUsers", "array-contains", user.uid)
+      ),
+      orderBy("official", "desc"), 
+      orderBy("last_message_at", "desc")
+    );
 
     const unsubscribe = onSnapshot(channelsQuery, (snapshot) => {
       const fetchedChannels = [];
@@ -109,7 +121,7 @@ function App() {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [user]);
 
   // target lock to null div (bottom of the messages)
   const messagesEndRef = useRef(null);
