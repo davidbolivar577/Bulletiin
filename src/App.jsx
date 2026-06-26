@@ -5,7 +5,7 @@ import { auth } from './firebase'
 import Login from './components/Login.jsx'
 
 import { db } from "./firebase.js";
-import { collection, addDoc, serverTimestamp, query, orderBy, limitToLast, onSnapshot, doc, getDoc, updateDoc, writeBatch } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, query, orderBy, limitToLast, onSnapshot, doc, getDoc, updateDoc, writeBatch, where, or } from "firebase/firestore";
 
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
