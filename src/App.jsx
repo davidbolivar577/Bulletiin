@@ -328,8 +328,11 @@ function App() {
           <div className="inputAndButton">
             <input value={messageInput} onChange={(e) => setMessageInput(e.target.value)}
               placeholder="Enter your message here..." />
-            <button type="submit">&gt;</button>
+            <button type="submit">send</button>
           </div>
+          <form className="logout-form" onSubmit={(e) => { e.preventDefault(); handleLogout(); }}>
+            <button className="LogoutButton" onClick={handleLogout}>Logout</button>
+          </form>
         </form>
       </div>
     </div>
