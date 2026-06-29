@@ -71,7 +71,8 @@ function App() {
     const messagesRef = collection(db, "channels", activeRoom, "messages");
 
     // Message grabbing, and ordering logic
-    const q = query(messagesRef, orderBy("timestamp", "asc"), limitToLast(50));
+    const [messageLimit, setMessageLimit] = useState(10);
+    const q = query(messagesRef, orderBy("timestamp", "asc"), limitToLast(messageLimit));
 
     // actual listener/refresh function
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -191,6 +192,12 @@ function App() {
     }
   }
 
+  const messageLoad = (e) => {
+    if (e.target.scrollTop === 0) {
+      setMessageLimit((prev) => prev + 10);
+    }
+  };
+
   return (
     <>
       <div className="app-container">
@@ -230,8 +237,9 @@ function App() {
           </button>
         </div>
 
+
         {/*Chat Display Here: */}
-        <div className="chat-messages">
+        <div className="chat-messages" onScroll={messageLoad}>
           {messages.map((msg, index) => {
             // Check who message belongs to
             const isSelf = msg.uid === user.uid;
