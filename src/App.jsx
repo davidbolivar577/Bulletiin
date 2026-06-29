@@ -40,6 +40,9 @@ function App() {
 
   const [chatRooms, setChatRooms] = useState([]);
 
+  // Message limits (changes when a user scrolls to top)
+  const [messageLimit, setMessageLimit] = useState(10);
+
   // Auth & Profile Listener
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -71,7 +74,6 @@ function App() {
     const messagesRef = collection(db, "channels", activeRoom, "messages");
 
     // Message grabbing, and ordering logic
-    const [messageLimit, setMessageLimit] = useState(10);
     const q = query(messagesRef, orderBy("timestamp", "asc"), limitToLast(messageLimit));
 
     // actual listener/refresh function
@@ -91,7 +93,7 @@ function App() {
     });
 
     return () => unsubscribe();
-  }, [activeRoom, user]);
+  }, [activeRoom, messageLimit, user]);
 
   useEffect(() => {
     if (!user) return;
