@@ -209,7 +209,7 @@ function App() {
             {chatRooms.map((room) => (
               <button
                 key={room.id}
-                className={`room-card ${activeRoom === room.id ? "active" : ""}`}
+                className={`room-card ${room.isPublic ? "public-room" : "private-room"} ${activeRoom === room.id ? "active" : ""}`}
                 onClick={() => {
                   setActiveRoom(room.id);
                   setIsSidebarOpen(false); // Closes menu automatically when a room is clicked
