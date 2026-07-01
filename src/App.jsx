@@ -6,18 +6,13 @@ import Login from './components/Login.jsx'
 import CreateRoomModal from './components/CreateRoomModal.jsx'
 
 import { db } from "./firebase.js";
-import { collection, addDoc, serverTimestamp, query, orderBy, limitToLast, onSnapshot, doc, getDoc, updateDoc, writeBatch, where, or } from "firebase/firestore";
+import { collection, serverTimestamp, query, orderBy, limitToLast, onSnapshot, doc, getDoc, updateDoc, writeBatch, where, or } from "firebase/firestore";
 
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
 import defaultPfp from './assets/default_pfp.jpg'
 import newImg from './assets/new.png'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   // Mobile sidebar toggle state
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
