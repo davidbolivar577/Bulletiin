@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
 
 export default function CreateRoomModal({ isOpen, onClose, user, setActiveRoom, chatRooms }) {
@@ -32,22 +32,39 @@ export default function CreateRoomModal({ isOpen, onClose, user, setActiveRoom, 
       return; 
     }
 
+    const userAlreadyCreatedRoom = chatRooms.some(
+      (room) => room.creator === user.uid
+    );
+
+    if (userAlreadyCreatedRoom) {
+      setErrorMsg("You can only create one room per account!");
+      return;
+    }
+
     setErrorMsg("");
 
     try {
       const channelsRef = collection(db, "channels");
 
-      const docRef = await addDoc(channelsRef, {
+      const safeName = trimmedName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      const autoId = doc(channelsRef).id;
+      const customDocId = `${safeName}-${autoId}`;
+
+      // Create a reference to that specific custom ID
+      const newRoomRef = doc(db, "channels", customDocId);
+
+      await setDoc(newRoomRef, {
         allowedUsers: [user.uid],
         createdOn: serverTimestamp(),
         creator: user.uid,
-        isPublic: isPublicRoom,
+        isPublic: true,
         last_message_at: serverTimestamp(),
         name: trimmedName,
-        official: false
-    });
+        official: false,
+        preview: "https://firebasestorage.googleapis.com/v0/b/bulletiin--with-tiims.appspot.com/o/default-room.png?alt=media" 
+      });
 
-      setActiveRoom(docRef.id); // Switch to the new room
+      setActiveRoom(customDocId);
 
       handleClose();
 
@@ -80,10 +97,11 @@ export default function CreateRoomModal({ isOpen, onClose, user, setActiveRoom, 
           </div>
 
           <div className="form-group checkbox-group">
-            <label>
+            <label style={{ opacity: 0.6, cursor: "not-allowed" }}>
               <input 
                 type="checkbox" 
-                checked={isPublicRoom}
+                checked={true}
+                disabled
                 onChange={(e) => setIsPublicRoom(e.target.checked)}
               />
               Public
