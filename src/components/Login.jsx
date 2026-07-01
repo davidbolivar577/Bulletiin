@@ -3,6 +3,8 @@ import { signInWithPopup } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, googleProvider, db } from '../firebase';
 
+import Logo from '../assets/favicon.png'
+
 export default function Login() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -42,6 +44,7 @@ export default function Login() {
     <div className="login-container">
       <div className="login-card">
         <h1>Bulletiin</h1>
+        <img src={Logo} alt="logo" style={{ width: '20%', height: '20%' }}></img>
         <p>Connect with your Tiim.</p>
         
         {error && <p className="error-message">{error}</p>}
