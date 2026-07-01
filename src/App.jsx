@@ -43,6 +43,9 @@ function App() {
   const [chatRooms, setChatRooms] = useState([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
+  // Message limits (changes when a user scrolls to top)
+  const [messageLimit, setMessageLimit] = useState(10);
+
   // Auth & Profile Listener
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -74,7 +77,7 @@ function App() {
     const messagesRef = collection(db, "channels", activeRoom, "messages");
 
     // Message grabbing, and ordering logic
-    const q = query(messagesRef, orderBy("timestamp", "asc"), limitToLast(50));
+    const q = query(messagesRef, orderBy("timestamp", "asc"), limitToLast(messageLimit));
 
     // actual listener/refresh function
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -93,7 +96,7 @@ function App() {
     });
 
     return () => unsubscribe();
-  }, [activeRoom, user]);
+  }, [activeRoom, messageLimit, user]);
 
   useEffect(() => {
     if (!user) return;
@@ -194,6 +197,12 @@ function App() {
     }
   }
 
+  const messageLoad = (e) => {
+    if (e.target.scrollTop === 0) {
+      setMessageLimit((prev) => prev + 10);
+    }
+  };
+
   return (
     <>
       <div className="app-container">
@@ -245,8 +254,9 @@ function App() {
           </button>
         </div>
 
+
         {/*Chat Display Here: */}
-        <div className="chat-messages">
+        <div className="chat-messages" onScroll={messageLoad}>
           {messages.map((msg, index) => {
             // Check who message belongs to
             const isSelf = msg.uid === user.uid;
