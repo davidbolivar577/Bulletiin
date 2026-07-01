@@ -44,9 +44,8 @@ export default function CreateRoomModal({ isOpen, onClose, user, setActiveRoom, 
         isPublic: isPublicRoom,
         last_message_at: serverTimestamp(),
         name: trimmedName,
-        official: false,
-        preview: "https://firebasestorage.googleapis.com/v0/b/bulletiin--with-tiims.appspot.com/o/default-room.png?alt=media"
-      });
+        official: false
+    });
 
       setActiveRoom(docRef.id); // Switch to the new room
 
@@ -87,7 +86,7 @@ export default function CreateRoomModal({ isOpen, onClose, user, setActiveRoom, 
                 checked={isPublicRoom}
                 onChange={(e) => setIsPublicRoom(e.target.checked)}
               />
-              Make this room Public
+              Public
             </label>
           </div>
 
