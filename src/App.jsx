@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { auth } from './firebase'
 import Login from './components/Login.jsx'
+import CreateRoomModal from './components/CreateRoomModal.jsx'
 
 import { db } from "./firebase.js";
 import { collection, addDoc, serverTimestamp, query, orderBy, limitToLast, onSnapshot, doc, getDoc, updateDoc, writeBatch, where, or } from "firebase/firestore";
@@ -11,6 +12,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import defaultPfp from './assets/default_pfp.jpg'
+import newImg from './assets/new.png'
 import './App.css'
 
 function App() {
@@ -39,6 +41,7 @@ function App() {
   const [loading, setLoading] = useState(true)
 
   const [chatRooms, setChatRooms] = useState([]);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   // Auth & Profile Listener
   useEffect(() => {
@@ -214,6 +217,18 @@ function App() {
                 <p className="room-name">{room.name}</p>
               </button>
             ))}
+            <button
+                className={`room-card`}
+                onClick={() => {
+                  setIsCreateModalOpen(true);
+                  setIsSidebarOpen(false); // Closes menu automatically when a room is clicked
+                }}
+              >
+                <div className="room-preview">
+                  <img src={newImg} alt="new room" />
+                </div>
+                <p className="room-name">Create new room</p>
+              </button>
           </div>
         </div>
 
@@ -335,6 +350,13 @@ function App() {
       </div>
     </div>
     {/*This is the end of the main chat room page.*/}
+    <CreateRoomModal 
+      isOpen={isCreateModalOpen} 
+      onClose={() => setIsCreateModalOpen(false)} 
+      user={user} 
+      setActiveRoom={setActiveRoom} 
+      chatRooms={chatRooms}
+    />
     </>
   )
 }

@@ -1,18 +1,53 @@
-rules_version='2'
+rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      // This rule allows anyone with your database reference to view, edit,
-      // and delete all data in your database. It is useful for getting
-      // started, but it is configured to expire after 30 days because it
-      // leaves your app open to attackers. At that time, all client
-      // requests to your database will be denied.
-      //
-      // Make sure to write security rules for your app before that time, or
-      // else all client requests to your database will be denied until you
-      // update your rules.
-      allow read, write: if request.time < timestamp.date(2026, 6, 26);
+    
+    // 1. USERS COLLECTION
+    match /users/{userId} {
+      // Any logged-in user can view profiles
+      allow read: if request.auth != null;
+      // You can only create/edit your own user document
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // 2. CHANNELS COLLECTION
+    match /channels/{channelId} {
+      // READ: Allowed if the channel is public OR if the user is in the allowedUsers array
+      allow read: if request.auth != null && 
+                  (resource.data.isPublic == true || request.auth.uid in resource.data.allowedUsers);
+      
+      // CREATE: Any logged-in user can create a brand new channel
+      allow create: if request.auth != null;
+      
+      // UPDATE/DELETE: You can modify the channel (e.g., updating last_message_at) 
+      // ONLY if it's public or you are a member of it.
+      allow update, delete: if request.auth != null && 
+                            (resource.data.isPublic == true || request.auth.uid in resource.data.allowedUsers);
+    }
+
+    // 3. MESSAGES SUBCOLLECTION
+    match /channels/{channelId}/messages/{messageId} {
+      
+      // HELPER FUNCTION: Grabs the parent channel so we don't have to re-type this long path
+      function getChannel() {
+        return get(/databases/$(database)/documents/channels/$(channelId)).data;
+      }
+
+      // READ: Allowed if the parent channel is public OR you are in its allowedUsers array
+      allow read: if request.auth != null && 
+                  (getChannel().isPublic == true || request.auth.uid in getChannel().allowedUsers);
+      
+      // CREATE: You must be allowed in the channel AND you cannot spoof someone else's UID
+      allow create: if request.auth != null 
+                    && request.auth.uid == request.resource.data.uid
+                    && (getChannel().isPublic == true || request.auth.uid in getChannel().allowedUsers);
+      
+      // UPDATE: To edit or soft-delete a message, you MUST be the original author
+      allow update: if request.auth != null && request.auth.uid == resource.data.uid;
+                    
+      // DELETE: Hard deletes limited to the original author
+      allow delete: if request.auth != null && request.auth.uid == resource.data.uid;
     }
   }
 }
