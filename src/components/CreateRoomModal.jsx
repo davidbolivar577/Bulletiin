@@ -4,14 +4,14 @@ import { db } from "../firebase";
 
 export default function CreateRoomModal({ isOpen, onClose, user, setActiveRoom, chatRooms }) {
   const [newRoomName, setNewRoomName] = useState("");
-  const [isPublicRoom, setIsPublicRoom] = useState(true);
+  //const [isPublicRoom, setIsPublicRoom] = useState(true);//TODO {private rooms} uncomment
   const [errorMsg, setErrorMsg] = useState("");
 
   if (!isOpen) return null;
 
   const handleClose = () => {
     setNewRoomName("");
-    setIsPublicRoom(true);
+    //setIsPublicRoom(true);//TODO {private rooms} uncomment
     setErrorMsg("");
     onClose();
   };
@@ -57,7 +57,7 @@ export default function CreateRoomModal({ isOpen, onClose, user, setActiveRoom, 
         allowedUsers: [user.uid],
         createdOn: serverTimestamp(),
         creator: user.uid,
-        isPublic: true,
+        isPublic: true, //TODO {private rooms}: Swap 'true' with 'isPublicRoom'
         last_message_at: serverTimestamp(),
         name: trimmedName,
         official: false,
@@ -101,8 +101,8 @@ export default function CreateRoomModal({ isOpen, onClose, user, setActiveRoom, 
               <input 
                 type="checkbox" 
                 checked={true}
-                disabled
-                onChange={(e) => setIsPublicRoom(e.target.checked)}
+                disabled //TODO {private rooms}: remove
+                //onChange={(e) => setIsPublicRoom(e.target.checked)}//TODO {private rooms} uncomment
               />
               Public
             </label>
