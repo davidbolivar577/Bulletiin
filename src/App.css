@@ -53,6 +53,25 @@ button {
   flex-direction: column;
 }
 
+.channelControls {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 7px;
+  border-width: 0px 0px 1px 0px;
+  border-style: solid;
+  border-color: grey;
+}
+
+.create-room {
+  width: 10%;
+}
+
+.search-bar {
+  width: 90%;
+}
+
 /*This hold the entire righthand chat display */
 .main-chat {
   flex: 1; 
