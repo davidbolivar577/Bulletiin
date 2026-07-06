@@ -55,14 +55,21 @@ export default function CreateRoomModal({ isOpen, onClose, user, setActiveRoom, 
 
       await setDoc(newRoomRef, {
         allowedUsers: [user.uid],
-        createdOn: serverTimestamp(),
-        creator: user.uid,
-        isPublic: true, //TODO {private rooms}: Swap 'true' with 'isPublicRoom'
-        last_message_at: serverTimestamp(),
+      
         name: trimmedName,
+      
+        creator: user.uid,          
+        owner: user.displayName,    
+      
+        createdOn: serverTimestamp(), 
+      
+        isPublic: true, // TODO: replace with isPublicRoom later
+      
+        last_message_at: serverTimestamp(),
         official: false,
-        preview: "https://firebasestorage.googleapis.com/v0/b/bulletiin--with-tiims.appspot.com/o/default-room.png?alt=media" 
-      });
+      
+        preview: "https://firebasestorage.googleapis.com/v0/b/bulletiin--with-tiims.appspot.com/o/default-room.png?alt=media"
+});
 
       setActiveRoom(customDocId);
 
