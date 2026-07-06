@@ -289,18 +289,52 @@ button {
 }
 
 .room-card {
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0;
-  transition: transform 0.15s ease;
+    width: 100%;
+    border: none;
+    border-radius: 14px;
+    background: white;
+    padding: 16px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    box-shadow: 0 3px 8px rgba(0,0,0,.12);
+    transition: .2s;
 }
 
 .room-card:hover {
-  transform: translateY(-2px);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0,0,0,.18);
+}
+
+.room-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:12px;
+}
+
+.room-name{
+    margin:0;
+    font-size:1.15rem;
+    font-weight:700;
+    color:#333;
+}
+
+.room-lock{
+    font-size:1.3rem;
+}
+
+.room-created,
+.room-owner{
+    margin:3px 0;
+    color:#666;
+    font-size:.9rem;
+}
+
+.room-card.active{
+    border:2px solid #2d7df4;
+    background:#eef5ff;
 }
 
 .room-preview {
