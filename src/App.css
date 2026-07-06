@@ -92,11 +92,9 @@ button {
 
 .message-actions {
   display: flex;
-  gap: 2px;
+  gap: 5px;
   transition: transform 0.1s ease;
   animation: slideIn 0.1s ease;
-  align-items: center;
-  justify-content: center;
 }
 @keyframes slideIn {
   from {
@@ -127,22 +125,19 @@ button {
   padding: 5px;
 }
 .message-actions button:first-of-type:hover {
-  transform: scale(1.05);
-  margin-right: 4px;
-  margin-left: 4px;
-  img {
-    width: 35px;
-  }
+  transform: scale(1.125);
+  margin-right: 3px;
 }
 .message-actions button:last-of-type:hover {
-  transform: scale(1.05);
-  margin-left: 4px;
-  img {
-    width: 35px;
-  }
+  transform: scale(1.125);
+  margin-left: 3px;
+  margin-right: 1px;
 }
 .message-actions button {
   border-radius: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .message-actions button:first-of-type {
   background-color: green;
