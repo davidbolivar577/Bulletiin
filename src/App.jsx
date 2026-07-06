@@ -212,27 +212,41 @@ function App() {
                 className={`room-card ${room.isPublic ? "public-room" : "private-room"} ${activeRoom === room.id ? "active" : ""}`}
                 onClick={() => {
                   setActiveRoom(room.id);
-                  setIsSidebarOpen(false); // Closes menu automatically when a room is clicked
+                  setIsSidebarOpen(false);
                 }}
               >
-                <div className="room-preview">
-                  <img src={room.preview} alt={room.name} />
+                <div className="room-header">
+                  <h3 className="room-name">{room.name}</h3>
+
+                  <span className="room-lock">
+                    {room.isPublic ? "🌐" : "🔒"}
+                  </span>
                 </div>
-                <p className="room-name">{room.name}</p>
+
+                <p className="room-created">
+                  Created: {room.createdAt}
+                </p>
+
+                <p className="room-owner">
+                  Owner: {room.owner}
+                </p>
               </button>
             ))}
             <button
-                className={`room-card`}
-                onClick={() => {
-                  setIsCreateModalOpen(true);
-                  setIsSidebarOpen(false); // Closes menu automatically when a room is clicked
-                }}
-              >
-                <div className="room-preview">
-                  <img src={newImg} alt="new room" />
-                </div>
-                <p className="room-name">Create new room</p>
-              </button>
+              className="room-card create-room"
+              onClick={() => {
+                setIsCreateModalOpen(true);
+                setIsSidebarOpen(false);
+              }}
+            >
+              <div className="room-header">
+                <h3 className="room-name">+ Create Room</h3>
+              </div>
+
+              <p className="room-created">
+                Start a new public or private chat room.
+              </p>
+            </button>
           </div>
         </div>
 
