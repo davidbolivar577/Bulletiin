@@ -10,6 +10,8 @@ import { collection, serverTimestamp, query, orderBy, limitToLast, onSnapshot, d
 
 import defaultPfp from './assets/default_pfp.jpg'
 import newImg from './assets/new.png'
+import editImg from './assets/edit.png'
+import trashImg from './assets/trash.png'
 import './App.css'
 
 function App() {
@@ -302,8 +304,8 @@ function App() {
                       <div className="message-actions">
                         {editingMessageId !== msg.id ? (
                           <>
-                            <button onClick={(e) => { e.stopPropagation(); setEditingMessageId(msg.id); setEditMessageInput(msg.message_content); }}>Edit</button>
-                            <button onClick={(e) => { e.stopPropagation(); handleDeleteMessage(msg.id); }}>Delete</button>
+                            <button onClick={(e) => { e.stopPropagation(); setEditingMessageId(msg.id); setEditMessageInput(msg.message_content); }}><img src={editImg} alt="Edit"/></button>
+                            <button onClick={(e) => { e.stopPropagation(); handleDeleteMessage(msg.id); }}><img src={trashImg} alt="Delete"/></button>
                           </>
                         ) : null}
                       </div>
