@@ -18,6 +18,9 @@ function App() {
   // Mobile sidebar toggle state
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  // SearchBar contents
+  const [searchQuery, setSearchQuery] = useState("");
+
   // Array to hold user messages
   const [messages, setMessages] = useState([]);
   // Current text input by the user:
@@ -200,15 +203,37 @@ function App() {
     }
   };
 
+  const filteredRooms = chatRooms.filter((room) =>
+  room.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <>
       <div className="app-container">
         {/* dynamic sidebar class (open or close for mobile) */}
         <div className={`sidebar ${isSidebarOpen ? "mobile-open" : ""}`}>
-          <h2 className="sidebar-title">Chat Rooms</h2>
+          <div className="topBar">
+            <h2 className="sidebar-title">Chat Rooms</h2>
+            <div className="channelControls">
+              <button
+                className="create-room"
+                onClick={() => {
+                  setIsCreateModalOpen(true);
+                  setIsSidebarOpen(false);
+                }}
+              >+</button>
+              <input 
+                className="search-bar" 
+                type="text" 
+                placeholder="Search..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
 
           <div className="room-list">
-            {chatRooms.map((room) => (
+            {filteredRooms.map((room) => (
               <button
                 key={room.id}
                 className={`room-card ${room.isPublic ? "public-room" : "private-room"} ${activeRoom === room.id ? "active" : ""}`}
@@ -226,29 +251,14 @@ function App() {
                 </div>
 
                 <p className="room-created">
-                  Created: {room.createdAt}
+                  Created: {room.createdOn?.toDate().toLocaleDateString() || "Unknown"}
                 </p>
 
                 <p className="room-owner">
-                  Owner: {room.owner}
+                  Owner: {room.owner || "Unknown"}
                 </p>
               </button>
             ))}
-            <button
-              className="room-card create-room"
-              onClick={() => {
-                setIsCreateModalOpen(true);
-                setIsSidebarOpen(false);
-              }}
-            >
-              <div className="room-header">
-                <h3 className="room-name">+ Create Room</h3>
-              </div>
-
-              <p className="room-created">
-                Start a new public or private chat room.
-              </p>
-            </button>
           </div>
         </div>
 
