@@ -112,3 +112,25 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+
+
+
+
+/* CURSOR STUFF */
+* {
+  cursor: url('./assets/wii_pointer.png'), auto;
+}
+
+a, button, [role="button"] {
+  cursor: url('./assets/wii_link_select.gif'), pointer;
+}
+
+input[type="text"], textarea, [contenteditable="true"] {
+  cursor: url('./assets/wii_text_select.gif'), text;
+}
+
+*:active {
+  cursor: url('./assets/wii_grab.png'), auto !important;
+}
+/* CURSOR STUFF */
