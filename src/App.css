@@ -64,12 +64,28 @@ button {
   border-color: grey;
 }
 
+.search-bar, .create-room {
+  height: 35px;
+  background-color: white;
+  outline: 1px solid grey;
+}
+
 .create-room {
-  width: 10%;
+  width: 20%;
+  border-radius: 20px 0px 0px 20px;
+  border-width: 0px 1px 0px 0px;
+  border-style: solid;
+}
+.create-room:hover {
+  background-color: rgb(219, 219, 219);
 }
 
 .search-bar {
-  width: 90%;
+  color: black;
+  padding-left: 10px;
+  width: 80%;
+  border-radius: 0px 20px 20px 0px;
+  border: none;
 }
 
 /*This hold the entire righthand chat display */

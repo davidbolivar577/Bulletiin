@@ -221,7 +221,12 @@ function App() {
                   setIsCreateModalOpen(true);
                   setIsSidebarOpen(false);
                 }}
-              >+</button>
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5" strokeLinecap="round">
+                  <line x1="13" y1="7" x2="13" y2="21"></line>
+                  <line x1="6" y1="14" x2="20" y2="14"></line>
+                </svg>
+              </button>
               <input 
                 className="search-bar" 
                 type="text" 
