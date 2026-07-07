@@ -151,42 +151,37 @@ button {
   }
 }
 
-.message-actions * {
-  transition: transform 0.1s ease, margin 0.15s ease;
-  
-  
-  /* border: 1px solid rgb(92, 92, 92); */
-  border: none;
-}
-/* .message-actions *:hover {
-  transform: scale(1.05);
-  margin: 4px;
-} */
 .message-actions img {
   width: 32px;
   border: none;
   outline: none;
   padding: 5px;
 }
-.message-actions button:first-of-type:hover {
+.editMessage:hover {
   transform: scale(1.125);
-  margin-right: 3px;
+  /* margin-right: 3px; */
 }
-.message-actions button:last-of-type:hover {
+.editMessage:hover ~ .deleteMessage {
+  transform: scale(0.85);
+}
+.deleteMessage:hover {
   transform: scale(1.125);
-  margin-left: 3px;
-  margin-right: 1px;
+}
+.message-actions:has(.deleteMessage:hover) .editMessage {
+  transform: scale(0.85);
 }
 .message-actions button {
   border-radius: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform 0.1s ease;  
+  border: none;
 }
-.message-actions button:first-of-type {
+.editMessage {
   background-color: green;
 }
-.message-actions button:last-of-type {
+.deleteMessage {
   background-color: red;
 }
 

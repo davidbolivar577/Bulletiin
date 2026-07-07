@@ -319,8 +319,8 @@ function App() {
                       <div className="message-actions">
                         {editingMessageId !== msg.id ? (
                           <>
-                            <button onClick={(e) => { e.stopPropagation(); setEditingMessageId(msg.id); setEditMessageInput(msg.message_content); }}><img src={editImg} alt="Edit"/></button>
-                            <button onClick={(e) => { e.stopPropagation(); handleDeleteMessage(msg.id); }}><img src={trashImg} alt="Delete"/></button>
+                            <button className="editMessage" onClick={(e) => { e.stopPropagation(); setEditingMessageId(msg.id); setEditMessageInput(msg.message_content); }}><img src={editImg} alt="Edit"/></button>
+                            <button className="deleteMessage" onClick={(e) => { e.stopPropagation(); handleDeleteMessage(msg.id); }}><img src={trashImg} alt="Delete"/></button>
                           </>
                         ) : null}
                       </div>
