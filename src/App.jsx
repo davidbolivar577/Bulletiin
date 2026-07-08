@@ -28,6 +28,9 @@ function App() {
   // User switching chatrooms
   const [activeRoom, setActiveRoom] = useState("official1");
 
+  const [oldestListMessage, setoldestListMessage] = useState(null);
+  const [oldestChannelMessage, setoldestChannelMessage] = useState(null);
+
   // Holds the ID of the clicked message
   const [selectedMessageId, setSelectedMessageId] = useState(null);
 
@@ -93,6 +96,7 @@ function App() {
 
       // Update and refresh messages
       setMessages(fetchedMessages);
+      setoldestListMessage(fetchedMessages[0]?.id || null);
     });
 
     return () => unsubscribe();
