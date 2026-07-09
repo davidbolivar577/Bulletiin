@@ -50,7 +50,7 @@ function App() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   // Message limits (changes when a user scrolls to top)
-  const [messageLimit, setMessageLimit] = useState(10);
+  const [messageLimit, setMessageLimit] = useState(11);
 
   // Auth & Profile Listener
   useEffect(() => {
@@ -217,7 +217,7 @@ function App() {
         return;
       }
       setShouldIScroll(false);
-      setMessageLimit((prev) => prev + 10);
+      setMessageLimit((prev) => prev + 5);
     }
   };
 
