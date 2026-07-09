@@ -28,8 +28,11 @@ function App() {
   // User switching chatrooms
   const [activeRoom, setActiveRoom] = useState("official1");
 
-  const [oldestListMessage, setoldestListMessage] = useState(null);
-  const [oldestChannelMessage, setoldestChannelMessage] = useState(null);
+  const [currentOldestListMessage, setCurrentOldestListMessage] = useState(null);
+  const [lastOldestListMessage, setLastOldestListMessage] = useState(null);
+
+  // WIP: this state will be changed based off scroll height (if the user is far enough from the bottom, they won't be scrolled down auatomatically when a message is sent)
+  const [shouldIScroll, setShouldIScroll] = useState(true);
 
   // Holds the ID of the clicked message
   const [selectedMessageId, setSelectedMessageId] = useState(null);
@@ -82,6 +85,7 @@ function App() {
     // Message grabbing, and ordering logic
     const q = query(messagesRef, orderBy("timestamp", "asc"), limitToLast(messageLimit));
 
+
     // actual listener/refresh function
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const fetchedMessages = [];
@@ -96,7 +100,9 @@ function App() {
 
       // Update and refresh messages
       setMessages(fetchedMessages);
-      setoldestListMessage(fetchedMessages[0]?.id || null);
+      setLastOldestListMessage(currentOldestListMessage);
+      setCurrentOldestListMessage(fetchedMessages[0]?.id || null);
+      console.log(currentOldestListMessage, lastOldestListMessage);
     });
 
     return () => unsubscribe();
@@ -141,7 +147,10 @@ function App() {
 
   // conditions (run it when "messages" changes)
   useEffect(() => {
-    scrollToBottom();
+    if (shouldIScroll) {
+      scrollToBottom();
+    }
+    setShouldIScroll(true);
   }, [messages]);
 
   const handleLogout = async () => {
@@ -203,6 +212,11 @@ function App() {
 
   const messageLoad = (e) => {
     if (e.target.scrollTop === 0) {
+      if (currentOldestListMessage === lastOldestListMessage && currentOldestListMessage !== null) {
+        console.log("No more messages to load.");
+        return;
+      }
+      setShouldIScroll(false);
       setMessageLimit((prev) => prev + 10);
     }
   };
