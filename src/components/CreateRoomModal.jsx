@@ -66,6 +66,7 @@ export default function CreateRoomModal({ isOpen, onClose, user, setActiveRoom, 
         isPublic: true, // TODO: replace with isPublicRoom later
       
         last_message_at: serverTimestamp(),
+        last_message_preview: "New Room",
         official: false,
       
         preview: "https://firebasestorage.googleapis.com/v0/b/bulletiin--with-tiims.appspot.com/o/default-room.png?alt=media"

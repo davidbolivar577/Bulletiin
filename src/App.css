@@ -396,11 +396,35 @@ button {
     font-size:1.3rem;
 }
 
-.room-created,
-.room-owner{
-    margin:3px 0;
-    color:#666;
-    font-size:.9rem;
+/* --- ROOM CARD INFO TEXT --- */
+.room-last-message,
+.room-created, 
+.room-owner {
+  font-size: 0.8rem;
+  color: #666;
+  margin: 4px 0 0 0;
+  text-align: left;
+}
+
+.room-last-message {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.preview-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.preview-time {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.preview-empty {
+  font-style: italic;
 }
 
 .room-card.active{

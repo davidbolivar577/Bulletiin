@@ -140,6 +140,18 @@ function App() {
     scrollToBottom();
   }, [messages]);
 
+  const formatTimeSince = (timestamp) => {
+    if (!timestamp) return "";
+    const now = new Date();
+    const date = timestamp.toDate();
+    const diffInSeconds = Math.floor((now - date) / 1000);
+
+    if (diffInSeconds < 60) return "Just now";
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h`;
+    return `${Math.floor(diffInSeconds / 86400)}d`;
+  };
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -255,6 +267,17 @@ function App() {
                   </span>
                 </div>
 
+                <p className="room-last-message">
+                  {room.last_message_preview ? (
+                    <>
+                      <span className="preview-text">{room.last_message_preview}</span>
+                      <span className="preview-time"> • {formatTimeSince(room.last_message_at)}</span>
+                    </>
+                  ) : (
+                    <span className="preview-empty">No messages yet</span>
+                  )}
+                </p>
+
                 <p className="room-created">
                   Created: {room.createdOn?.toDate().toLocaleDateString() || "Unknown"}
                 </p>
@@ -363,7 +386,8 @@ function App() {
               const channelRef = doc(db, "channels", activeRoom);
 
               batch.update(channelRef, {
-                last_message_at: serverTimestamp()
+                last_message_at: serverTimestamp(),
+                last_message_preview: messageInput
               });
 
               await batch.commit();
