@@ -502,7 +502,7 @@ button {
     /*background-color: #ffff;*/
     color: black;
     z-index: 10;
-    border-right: none;
+    /* border-right: none; */
     opacity: 75%;
 
     transition: box-shadow 0.1s ease, border 0.1s ease, color 0.1s ease;

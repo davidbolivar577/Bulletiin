@@ -28,6 +28,12 @@ function App() {
   // User switching chatrooms
   const [activeRoom, setActiveRoom] = useState("official1");
 
+  const [currentOldestListMessage, setCurrentOldestListMessage] = useState(null);
+  const [lastOldestListMessage, setLastOldestListMessage] = useState(null);
+
+  // WIP: this state will be changed based off scroll height (if the user is far enough from the bottom, they won't be scrolled down auatomatically when a message is sent)
+  const [shouldIScroll, setShouldIScroll] = useState(true);
+
   // Holds the ID of the clicked message
   const [selectedMessageId, setSelectedMessageId] = useState(null);
 
@@ -44,7 +50,7 @@ function App() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   // Message limits (changes when a user scrolls to top)
-  const [messageLimit, setMessageLimit] = useState(10);
+  const [messageLimit, setMessageLimit] = useState(11);
 
   // Auth & Profile Listener
   useEffect(() => {
@@ -79,6 +85,7 @@ function App() {
     // Message grabbing, and ordering logic
     const q = query(messagesRef, orderBy("timestamp", "asc"), limitToLast(messageLimit));
 
+
     // actual listener/refresh function
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const fetchedMessages = [];
@@ -93,6 +100,9 @@ function App() {
 
       // Update and refresh messages
       setMessages(fetchedMessages);
+      setLastOldestListMessage(currentOldestListMessage);
+      setCurrentOldestListMessage(fetchedMessages[0]?.id || null);
+      console.log(currentOldestListMessage, lastOldestListMessage);
     });
 
     return () => unsubscribe();
@@ -137,7 +147,10 @@ function App() {
 
   // conditions (run it when "messages" changes)
   useEffect(() => {
-    scrollToBottom();
+    if (shouldIScroll) {
+      scrollToBottom();
+    }
+    setShouldIScroll(true);
   }, [messages]);
 
   const formatTimeSince = (timestamp) => {
@@ -211,7 +224,12 @@ function App() {
 
   const messageLoad = (e) => {
     if (e.target.scrollTop === 0) {
-      setMessageLimit((prev) => prev + 10);
+      if (currentOldestListMessage === lastOldestListMessage && currentOldestListMessage !== null) {
+        console.log("No more messages to load.");
+        return;
+      }
+      setShouldIScroll(false);
+      setMessageLimit((prev) => prev + 5);
     }
   };
 
