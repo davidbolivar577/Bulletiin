@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { collection, doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
-import SHA256 from "crypto-js/sha256";
+import CryptoJS from "crypto-js";
 
 export default function CreateRoomModal({ isOpen, onClose, user, setActiveRoom, chatRooms }) {
   const [newRoomName, setNewRoomName] = useState("");
@@ -65,8 +65,8 @@ export default function CreateRoomModal({ isOpen, onClose, user, setActiveRoom, 
       let hash2 = null;
 
       if (!isPublicRoom) {
-        hash1 = SHA256(roomPassword).toString();
-        hash2 = SHA256(hash1).toString();
+        hash1 = CryptoJS.SHA256(roomPassword).toString();
+        hash2 = CryptoJS.SHA256(hash1).toString();
       }
 
       await setDoc(newRoomRef, {
