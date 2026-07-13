@@ -408,6 +408,13 @@ function App() {
               </button>
             ))}
           </div>
+          <div className="user-info">
+            <p className="user-name">Logged in as: {dbUser?.displayName || user.displayName || "Unknown"}</p>
+            {/* <p className="user-email">{user.email}</p> */}
+            <form className="logout-form" onSubmit={(e) => { e.preventDefault(); handleLogout(); }}>
+              <button className="LogoutButton" onClick={handleLogout}>Logout</button>
+            </form>
+          </div>
         </div>
 
       {/* Main Chat Area */}
@@ -532,9 +539,6 @@ function App() {
               placeholder="Enter your message here..." />
             <button type="submit">send</button>
           </div>
-          <form className="logout-form" onSubmit={(e) => { e.preventDefault(); handleLogout(); }}>
-            <button className="LogoutButton" onClick={handleLogout}>Logout</button>
-          </form>
         </form>
       </div>
     </div>
