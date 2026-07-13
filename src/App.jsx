@@ -387,7 +387,11 @@ function App() {
                   {room.last_message_preview ? (
                     <>
                       <span className="preview-text">{getDecryptedPreview(room)}</span>
-                      <span className="preview-time"> • {formatTimeSince(room.last_message_at)}</span>
+                      
+                      {/* ONLY show the timestamp if the room is public or the user has the key */}
+                      {(room.isPublic || keyring[room.id]) && (
+                        <span className="preview-time"> • {formatTimeSince(room.last_message_at)}</span>
+                      )}
                     </>
                   ) : (
                     <span className="preview-empty">No messages yet</span>
