@@ -6,7 +6,8 @@ import Login from './components/Login.jsx'
 import CreateRoomModal from './components/CreateRoomModal.jsx'
 
 import { db } from "./firebase.js";
-import { collection, serverTimestamp, query, orderBy, limit, limitToLast, onSnapshot, doc, getDoc, getDocs, updateDoc, writeBatch, where, or } from "firebase/firestore";
+import { collection, serverTimestamp, query, orderBy, limit, limitToLast, onSnapshot, doc, getDoc, getDocs, updateDoc, writeBatch, where, or, deleteDoc } from "firebase/firestore";
+import CryptoJS from "crypto-js"; 
 
 import defaultPfp from './assets/default_pfp.jpg'
 import newImg from './assets/new.png'
@@ -59,6 +60,9 @@ function App() {
   // Tracks if a room has zero messages so the listener doesn't get stuck waiting for a floor
   const [isRoomEmpty, setIsRoomEmpty] = useState(false);
 
+  // Holds the user's private keys { roomId: secretKey }
+  const [keyring, setKeyring] = useState({});
+
   // Auth & Profile Listener
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -83,6 +87,20 @@ function App() {
     
     return () => unsubscribe();
   }, []);
+
+  // Keyring Listener
+  useEffect(() => {
+    if (!user) return;
+    const keysRef = collection(db, "users", user.uid, "keys");
+    const unsubscribe = onSnapshot(keysRef, (snapshot) => {
+      const keysObj = {};
+      snapshot.forEach((doc) => {
+        keysObj[doc.id] = doc.data().key;
+      });
+      setKeyring(keysObj);
+    });
+    return () => unsubscribe();
+  }, [user]);
 
   // Grab messages, stick em in the list, and set up the initial message ceiling
   useEffect(() => {
@@ -149,10 +167,6 @@ function App() {
     
     const channelsQuery = query(
       channelsRef, 
-      or(
-        where("isPublic", "==", true),
-        where("allowedUsers", "array-contains", user.uid)
-      ),
       orderBy("official", "desc"), 
       orderBy("last_message_at", "desc")
     );
@@ -256,6 +270,41 @@ function App() {
     }
   }
 
+  // Room deletion backend
+  const handleDeleteRoom = async (roomId, roomCreatorId, e) => {
+    if (e) e.stopPropagation(); 
+    if (user.uid !== roomCreatorId) {
+      alert("You only have permission to delete rooms you created.");
+      return;
+    }
+    const confirmDelete = window.confirm("Are you sure you want to delete this room? This cannot be undone.");
+    if (!confirmDelete) return;
+
+    try {
+      const roomRef = doc(db, "channels", roomId);
+      await deleteDoc(roomRef);
+      if (activeRoom === roomId) setActiveRoom("official1"); 
+    } catch (error) {
+      console.error("Error deleting room:", error);
+      alert("Failed to delete room. Check your console and database rules.");
+    }
+  };
+
+  const getDecryptedPreview = (room) => {
+    if (!room.last_message_preview) return null;
+    if (room.isPublic) return room.last_message_preview;
+    
+    const secretKey = keyring[room.id];
+    if (secretKey) {
+      try {
+        const bytes = CryptoJS.AES.decrypt(room.last_message_preview, secretKey);
+        const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
+        return decryptedText || "Encrypted text";
+      } catch (e) { return "Encrypted text"; }
+    }
+    return "Private Room"; 
+  };
+
   const messageLoad = async (e) => {
     if (e.target.scrollTop === 0 && oldestTimestamp) {
       setShouldIScroll(false); // Stop the auto-scroll down
@@ -337,7 +386,7 @@ function App() {
                 <p className="room-last-message">
                   {room.last_message_preview ? (
                     <>
-                      <span className="preview-text">{room.last_message_preview}</span>
+                      <span className="preview-text">{getDecryptedPreview(room)}</span>
                       <span className="preview-time"> • {formatTimeSince(room.last_message_at)}</span>
                     </>
                   ) : (
@@ -449,12 +498,21 @@ function App() {
                 pfp: dbUser?.avatarUrl || user.photoURL || ""
               });
 
+              let previewText = messageInput;
+              const currentRoom = chatRooms.find(r => r.id === activeRoom);
+              if (currentRoom && !currentRoom.isPublic) {
+                const secretKey = keyring[activeRoom];
+                if (secretKey) {
+                  previewText = CryptoJS.AES.encrypt(messageInput, secretKey).toString();
+                }
+              }
+
               // parent channel
               const channelRef = doc(db, "channels", activeRoom);
 
               batch.update(channelRef, {
                 last_message_at: serverTimestamp(),
-                last_message_preview: messageInput
+                last_message_preview: previewText
               });
 
               await batch.commit();
