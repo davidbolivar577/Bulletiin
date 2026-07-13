@@ -610,13 +610,34 @@ button {
   display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;
 }
 
-.form-group input[type="text"] {
+.form-group input[type="text"], .form-group input[type="password"] {
   padding: 12px;
   border-radius: 20px;
   border: 1px solid #ccc;
   background-color: #fff;
   color: #333;
   font-family: inherit;
+  flex-grow: 1; 
+}
+
+.password-input-wrapper {
+  display: flex; 
+  gap: 10px; 
+  align-items: stretch;
+}
+
+.password-toggle-btn {
+  padding: 0 15px;
+  border-radius: 20px;
+  background-color: transparent;
+  border: 1px solid #888;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.password-toggle-btn:hover {
+  background-color: #e0e0e0;
 }
 
 .checkbox-group label {
