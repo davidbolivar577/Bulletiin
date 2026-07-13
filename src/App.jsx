@@ -6,7 +6,8 @@ import Login from './components/Login.jsx'
 import CreateRoomModal from './components/CreateRoomModal.jsx'
 
 import { db } from "./firebase.js";
-import { collection, serverTimestamp, query, orderBy, limit, limitToLast, onSnapshot, doc, getDoc, getDocs, updateDoc, writeBatch, where, or, deleteDoc } from "firebase/firestore";
+// COMMIT 2: Added setDoc to imports
+import { collection, serverTimestamp, query, orderBy, limit, limitToLast, onSnapshot, doc, getDoc, getDocs, updateDoc, writeBatch, where, or, deleteDoc, setDoc } from "firebase/firestore";
 import CryptoJS from "crypto-js"; 
 
 import defaultPfp from './assets/default_pfp.jpg'
@@ -270,6 +271,33 @@ function App() {
     }
   }
 
+  const handleRoomClick = async (room) => {
+    if (room.isPublic || keyring[room.id]) {
+      setActiveRoom(room.id);
+      setIsSidebarOpen(false);
+    } else {
+      const inputPassword = window.prompt(`The room "${room.name}" is private. Enter password:`);
+      if (!inputPassword) return;
+      
+      const hash1 = CryptoJS.SHA256(inputPassword).toString();
+      const hash2 = CryptoJS.SHA256(hash1).toString();
+
+      if (hash2 === room.passwordHash) {
+        try {
+          const keyRef = doc(db, "users", user.uid, "keys", room.id);
+          await setDoc(keyRef, { key: hash1, addedAt: serverTimestamp() });
+          setActiveRoom(room.id);
+          setIsSidebarOpen(false);
+        } catch (error) {
+          console.error(error);
+          alert("Failed to join room. Check database rules.");
+        }
+      } else {
+        alert("Incorrect password!");
+      }
+    }
+  };
+
   // Room deletion backend
   const handleDeleteRoom = async (roomId, roomCreatorId, e) => {
     if (e) e.stopPropagation(); 
@@ -370,10 +398,7 @@ function App() {
               <button
                 key={room.id}
                 className={`room-card ${room.isPublic ? "public-room" : "private-room"} ${activeRoom === room.id ? "active" : ""}`}
-                onClick={() => {
-                  setActiveRoom(room.id);
-                  setIsSidebarOpen(false);
-                }}
+                onClick={() => handleRoomClick(room)}
               >
                 <div className="room-header">
                   <h3 className="room-name">{room.name}</h3>
@@ -532,9 +557,9 @@ function App() {
               placeholder="Enter your message here..." />
             <button type="submit">send</button>
           </div>
-          <form className="logout-form" onSubmit={(e) => { e.preventDefault(); handleLogout(); }}>
-            <button className="LogoutButton" onClick={handleLogout}>Logout</button>
-          </form>
+          <div className="logout-form">
+            <button type="button" className="LogoutButton" onClick={handleLogout}>Logout</button>
+          </div>
         </form>
       </div>
     </div>
