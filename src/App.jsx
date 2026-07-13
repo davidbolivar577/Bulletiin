@@ -6,7 +6,7 @@ import Login from './components/Login.jsx'
 import CreateRoomModal from './components/CreateRoomModal.jsx'
 
 import { db } from "./firebase.js";
-import { collection, serverTimestamp, query, orderBy, limit, limitToLast, onSnapshot, doc, getDoc, getDocs, updateDoc, writeBatch, where, or, deleteDoc } from "firebase/firestore";
+import { collection, serverTimestamp, query, orderBy, limit, limitToLast, onSnapshot, doc, getDoc, getDocs, updateDoc, writeBatch, where, or, deleteDoc, setDoc } from "firebase/firestore";
 import CryptoJS from "crypto-js"; 
 
 import defaultPfp from './assets/default_pfp.jpg'
@@ -62,6 +62,10 @@ function App() {
 
   // Holds the user's private keys { roomId: secretKey }
   const [keyring, setKeyring] = useState({});
+
+  const [passwordPromptRoom, setPasswordPromptRoom] = useState(null);
+  const [joinPassword, setJoinPassword] = useState("");
+  const [showJoinPassword, setShowJoinPassword] = useState(false);
 
   // Auth & Profile Listener
   useEffect(() => {
@@ -270,6 +274,17 @@ function App() {
     }
   }
 
+  const handleRoomClick = async (room) => {
+    if (room.isPublic || keyring[room.id]) {
+      setActiveRoom(room.id);
+      setIsSidebarOpen(false);
+    } else {
+      setPasswordPromptRoom(room);
+      setJoinPassword("");
+      setShowJoinPassword(false);
+    }
+  };
+
   // Room deletion backend
   const handleDeleteRoom = async (roomId, roomCreatorId, e) => {
     if (e) e.stopPropagation(); 
@@ -370,10 +385,7 @@ function App() {
               <button
                 key={room.id}
                 className={`room-card ${room.isPublic ? "public-room" : "private-room"} ${activeRoom === room.id ? "active" : ""}`}
-                onClick={() => {
-                  setActiveRoom(room.id);
-                  setIsSidebarOpen(false);
-                }}
+                onClick={() => handleRoomClick(room)}
               >
                 <div className="room-header">
                   <h3 className="room-name">{room.name}</h3>
@@ -543,6 +555,63 @@ function App() {
       </div>
     </div>
     {/*This is the end of the main chat room page.*/}
+    {passwordPromptRoom && (
+      <div className="modal-overlay">
+        <div className="modal-content">
+          <h2>Join Private Room</h2>
+          <p style={{ marginBottom: '15px' }}>The room <strong>"{passwordPromptRoom.name}"</strong> is private. Enter password:</p>
+          
+          <form onSubmit={async (e) => {
+            e.preventDefault();
+            const hash1 = CryptoJS.SHA256(joinPassword).toString();
+            const hash2 = CryptoJS.SHA256(hash1).toString();
+
+            if (hash2 === passwordPromptRoom.passwordHash) {
+              try {
+                const keyRef = doc(db, "users", user.uid, "keys", passwordPromptRoom.id);
+                await setDoc(keyRef, { key: hash1, addedAt: serverTimestamp() });
+                setActiveRoom(passwordPromptRoom.id);
+                setIsSidebarOpen(false);
+                setPasswordPromptRoom(null);
+              } catch (error) {
+                console.error(error);
+                alert("Failed to join room. Check database rules.");
+              }
+            } else {
+              alert("Incorrect password!");
+            }
+          }}>
+            <div className="form-group">
+              <div className="password-input-wrapper">
+                <input 
+                  type={showJoinPassword ? "text" : "password"} 
+                  value={joinPassword} 
+                  onChange={(e) => setJoinPassword(e.target.value)} 
+                  placeholder="Password..."
+                  autoFocus 
+                />
+                <button 
+                  type="button" 
+                  className="password-toggle-btn"
+                  onClick={() => setShowJoinPassword(!showJoinPassword)}
+                >
+                  {showJoinPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+            </div>
+
+            <div className="modal-actions" style={{ marginTop: '20px' }}>
+              <button type="button" className="cancel-btn" onClick={() => setPasswordPromptRoom(null)}>
+                Cancel
+              </button>
+              <button type="submit" className="submit-btn" disabled={!joinPassword.trim()}>
+                Join
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    )}
     <CreateRoomModal 
       isOpen={isCreateModalOpen} 
       onClose={() => setIsCreateModalOpen(false)} 

@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { collection, doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
-import SHA256 from "crypto-js/sha256";
+import CryptoJS from "crypto-js";
 
 export default function CreateRoomModal({ isOpen, onClose, user, setActiveRoom, chatRooms }) {
   const [newRoomName, setNewRoomName] = useState("");
   const [isPublicRoom, setIsPublicRoom] = useState(true);
   const [roomPassword, setRoomPassword] = useState(""); 
   const [errorMsg, setErrorMsg] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   if (!isOpen) return null;
 
@@ -65,8 +66,8 @@ export default function CreateRoomModal({ isOpen, onClose, user, setActiveRoom, 
       let hash2 = null;
 
       if (!isPublicRoom) {
-        hash1 = SHA256(roomPassword).toString();
-        hash2 = SHA256(hash1).toString();
+        hash1 = CryptoJS.SHA256(roomPassword).toString();
+        hash2 = CryptoJS.SHA256(hash1).toString();
       }
 
       await setDoc(newRoomRef, {
@@ -135,15 +136,26 @@ export default function CreateRoomModal({ isOpen, onClose, user, setActiveRoom, 
           {!isPublicRoom && (
             <div className="form-group">
               <label>Room Password:</label>
-              <input 
-                type="text" 
-                value={roomPassword}
-                onChange={(e) => {
-                  setRoomPassword(e.target.value);
-                  setErrorMsg("");
-                }}
-                placeholder="Make it memorable..."
-              />
+              
+              <div className="password-input-wrapper">
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  value={roomPassword}
+                  onChange={(e) => {
+                    setRoomPassword(e.target.value);
+                    setErrorMsg("");
+                  }}
+                  placeholder="Make it memorable..."
+                />
+                <button 
+                  type="button" 
+                  className="password-toggle-btn"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+              
               <small style={{display: 'block', marginTop: '4px', opacity: 0.7}}>
                 Passwords cannot be changed later.
               </small>
