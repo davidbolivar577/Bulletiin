@@ -6,7 +6,7 @@ import Login from './components/Login.jsx'
 import CreateRoomModal from './components/CreateRoomModal.jsx'
 
 import { db } from "./firebase.js";
-import { collection, serverTimestamp, query, orderBy, limitToLast, onSnapshot, doc, getDoc, updateDoc, writeBatch, where, or } from "firebase/firestore";
+import { collection, serverTimestamp, query, orderBy, limit, limitToLast, onSnapshot, doc, getDoc, getDocs, updateDoc, writeBatch, where, or } from "firebase/firestore";
 
 import defaultPfp from './assets/default_pfp.jpg'
 import newImg from './assets/new.png'
@@ -28,8 +28,8 @@ function App() {
   // User switching chatrooms
   const [activeRoom, setActiveRoom] = useState("official1");
 
-  const [currentOldestListMessage, setCurrentOldestListMessage] = useState(null);
-  const [lastOldestListMessage, setLastOldestListMessage] = useState(null);
+  // const [currentOldestListMessage, setCurrentOldestListMessage] = useState(null);
+  // const [lastOldestListMessage, setLastOldestListMessage] = useState(null);
 
   // WIP: this state will be changed based off scroll height (if the user is far enough from the bottom, they won't be scrolled down auatomatically when a message is sent)
   const [shouldIScroll, setShouldIScroll] = useState(true);
@@ -50,7 +50,14 @@ function App() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   // Message limits (changes when a user scrolls to top)
-  const [messageLimit, setMessageLimit] = useState(11);
+  // const [messageLimit, setMessageLimit] = useState(11);
+
+  // NEW
+  // Replaces messageLimit. This acts as the "starting line" for our live listener.
+  const [oldestTimestamp, setoldestTimestamp] = useState(null);
+  
+  // Tracks if a room has zero messages so the listener doesn't get stuck waiting for a floor
+  const [isRoomEmpty, setIsRoomEmpty] = useState(false);
 
   // Auth & Profile Listener
   useEffect(() => {
@@ -77,36 +84,63 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  // Firestore messages listener
+  // Grab messages, stick em in the list, and set up the initial message ceiling
   useEffect(() => {
-    if (!user) return;
+    if (!user || !activeRoom) return;
+
     const messagesRef = collection(db, "channels", activeRoom, "messages");
 
-    // Message grabbing, and ordering logic
-    const q = query(messagesRef, orderBy("timestamp", "asc"), limitToLast(messageLimit));
+    const assignInitialOldest = async() => {
+      // Message grabbing, and ordering logic
+      const q = query(messagesRef, orderBy("timestamp", "asc"), limitToLast(20));
+  
+      const snap = await getDocs(q);
+      if (snap.empty) {
+        setIsRoomEmpty(true);
+        setoldestTimestamp(null);
+      }
+      else {
+        setIsRoomEmpty(false);
+        const oldestMessage = snap.docs[0]
+        setoldestTimestamp(oldestMessage.data().timestamp);
+      }
+    };
 
+      // Update and refresh messages
+      setoldestTimestamp(null);
+      setIsRoomEmpty(false);
+      setMessages([]);
 
-    // actual listener/refresh function
+      assignInitialOldest();
+    }, [activeRoom, user]);
+
+  useEffect(() => {
+    if (!user || !activeRoom || (!oldestTimestamp && !isRoomEmpty)) return;
+
+    const messageRef = collection(db, "channels", activeRoom, "messages");
+    let q;
+
+    if(isRoomEmpty)
+      q = query(messageRef, orderBy('timestamp', 'asc'));
+    else
+      q = query(messageRef, orderBy('timestamp', 'asc'), where("timestamp", ">=", oldestTimestamp));
+
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const fetchedMessages = [];
 
       snapshot.forEach((doc) => {
-        // Grab data ALONG WITH DOCUMENT ID
+        //  Grab data ALONG WITH DOCUMENT ID
         fetchedMessages.push({
           id: doc.id,
           ...doc.data()
         });
       });
-
-      // Update and refresh messages
+      
       setMessages(fetchedMessages);
-      setLastOldestListMessage(currentOldestListMessage);
-      setCurrentOldestListMessage(fetchedMessages[0]?.id || null);
-      console.log(currentOldestListMessage, lastOldestListMessage);
     });
 
     return () => unsubscribe();
-  }, [activeRoom, messageLimit, user]);
+  }, [activeRoom, user, oldestTimestamp, isRoomEmpty]);
 
   useEffect(() => {
     if (!user) return;
@@ -222,14 +256,29 @@ function App() {
     }
   }
 
-  const messageLoad = (e) => {
-    if (e.target.scrollTop === 0) {
-      if (currentOldestListMessage === lastOldestListMessage && currentOldestListMessage !== null) {
-        console.log("No more messages to load.");
-        return;
+  const messageLoad = async (e) => {
+    if (e.target.scrollTop === 0 && oldestTimestamp) {
+      setShouldIScroll(false); // Stop the auto-scroll down
+
+      const messagesRef = collection(db, "channels", activeRoom, "messages");
+      
+      // Fetch 10 messages that are strictly OLDER than our current floor
+      const q = query(
+        messagesRef,
+        orderBy("timestamp", "desc"),
+        where("timestamp", "<", oldestTimestamp),
+        limit(10)
+      );
+
+      const snap = await getDocs(q);
+
+      if (!snap.empty) {
+        // Find the new oldest message in this batch, and push the floor back!
+        const newOldest = snap.docs[snap.docs.length - 1];
+        setoldestTimestamp(newOldest.data().timestamp);
+      } else {
+        console.log("No more older messages to load.");
       }
-      setShouldIScroll(false);
-      setMessageLimit((prev) => prev + 5);
     }
   };
 
