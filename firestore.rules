@@ -9,39 +9,50 @@ service cloud.firestore {
       allow read: if request.auth != null;
       // You can only create/edit your own user document
       allow write: if request.auth != null && request.auth.uid == userId;
+      
+      // NEW: THE CLOUD KEYRING
+      // Users have absolute control over their own keys, but no one else can read them.
+      match /keys/{keyId} {
+      	allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
     }
 
     // 2. CHANNELS COLLECTION
     match /channels/{channelId} {
-      // READ: Allowed if the channel is public OR if the user is in the allowedUsers array
-      allow read: if request.auth != null && 
-                  (resource.data.isPublic == true || request.auth.uid in resource.data.allowedUsers);
+      // READ: Anyone logged in can read the list to see the room names (Previews are encrypted!)
+      allow read: if request.auth != null;
       
       // CREATE: Any logged-in user can create a brand new channel
       allow create: if request.auth != null;
       
-      // UPDATE/DELETE: You can modify the channel (e.g., updating last_message_at) 
-      // ONLY if it's public or you are a member of it.
-      allow update, delete: if request.auth != null && 
-                            (resource.data.isPublic == true || request.auth.uid in resource.data.allowedUsers);
+      // UPDATE: Anyone can update a channel (required so users can bump the last_message_at timestamp)
+      allow update: if request.auth != null;
+      
+      // NEW: DELETE: ONLY the person who created the room can delete it!
+      allow delete: if request.auth != null && request.auth.uid == resource.data.creator;
     }
 
     // 3. MESSAGES SUBCOLLECTION
     match /channels/{channelId}/messages/{messageId} {
       
-      // HELPER FUNCTION: Grabs the parent channel so we don't have to re-type this long path
+      // HELPER: Grabs the parent channel 
       function getChannel() {
         return get(/databases/$(database)/documents/channels/$(channelId)).data;
       }
-
-      // READ: Allowed if the parent channel is public OR you are in its allowedUsers array
-      allow read: if request.auth != null && 
-                  (getChannel().isPublic == true || request.auth.uid in getChannel().allowedUsers);
       
-      // CREATE: You must be allowed in the channel AND you cannot spoof someone else's UID
+      // NEW HELPER: Checks if the user has this channel's key in their personal Keyring
+      function hasKey() {
+      	return exists(/databases/$(database)/documents/users/$(request.auth.uid)/keys/$(channelId));
+      }
+
+      // READ: Allowed if the parent channel is public OR you have the key in your keyring
+      allow read: if request.auth != null && 
+                  (getChannel().isPublic == true || hasKey());
+      
+      // CREATE: Allowed if channel is public OR you have the key (and no spoofing UIDs)
       allow create: if request.auth != null 
                     && request.auth.uid == request.resource.data.uid
-                    && (getChannel().isPublic == true || request.auth.uid in getChannel().allowedUsers);
+                    && (getChannel().isPublic == true || hasKey());
       
       // UPDATE: To edit or soft-delete a message, you MUST be the original author
       allow update: if request.auth != null && request.auth.uid == resource.data.uid;
