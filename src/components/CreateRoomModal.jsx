@@ -1,17 +1,20 @@
 import { useState } from 'react';
 import { collection, doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
+import SHA256 from "crypto-js/sha256";
 
 export default function CreateRoomModal({ isOpen, onClose, user, setActiveRoom, chatRooms }) {
   const [newRoomName, setNewRoomName] = useState("");
-  //const [isPublicRoom, setIsPublicRoom] = useState(true);//TODO {private rooms} uncomment
+  const [isPublicRoom, setIsPublicRoom] = useState(true);
+  const [roomPassword, setRoomPassword] = useState(""); 
   const [errorMsg, setErrorMsg] = useState("");
 
   if (!isOpen) return null;
 
   const handleClose = () => {
     setNewRoomName("");
-    //setIsPublicRoom(true);//TODO {private rooms} uncomment
+    setIsPublicRoom(true);
+    setRoomPassword("");
     setErrorMsg("");
     onClose();
   };
@@ -22,7 +25,11 @@ export default function CreateRoomModal({ isOpen, onClose, user, setActiveRoom, 
     
     if (!trimmedName) return;
 
-    // Check if the name already exists in the user's visible rooms
+    if (!isPublicRoom && roomPassword.trim().length < 4) {
+      setErrorMsg("Private rooms need a password (min 4 characters).");
+      return;
+    }
+
     const nameExists = chatRooms.some(
       (room) => room.name.toLowerCase() === trimmedName.toLowerCase()
     );
@@ -32,13 +39,15 @@ export default function CreateRoomModal({ isOpen, onClose, user, setActiveRoom, 
       return; 
     }
 
-    const userAlreadyCreatedRoom = chatRooms.some(
-      (room) => room.creator === user.uid
-    );
+    if (!isPublicRoom) {
+      const userAlreadyCreatedPrivateRoom = chatRooms.some(
+        (room) => room.creator === user.uid && room.isPublic === false
+      );
 
-    if (userAlreadyCreatedRoom) {
-      setErrorMsg("You can only create one room per account!");
-      return;
+      if (userAlreadyCreatedPrivateRoom) {
+        setErrorMsg("You can only create one private room per account!");
+        return;
+      }
     }
 
     setErrorMsg("");
@@ -50,30 +59,38 @@ export default function CreateRoomModal({ isOpen, onClose, user, setActiveRoom, 
       const autoId = doc(channelsRef).id;
       const customDocId = `${safeName}-${autoId}`;
 
-      // Create a reference to that specific custom ID
       const newRoomRef = doc(db, "channels", customDocId);
 
+      let hash1 = null;
+      let hash2 = null;
+
+      if (!isPublicRoom) {
+        hash1 = SHA256(roomPassword).toString();
+        hash2 = SHA256(hash1).toString();
+      }
+
       await setDoc(newRoomRef, {
-        allowedUsers: [user.uid],
-      
         name: trimmedName,
-      
         creator: user.uid,          
         owner: user.displayName,    
-      
         createdOn: serverTimestamp(), 
-      
-        isPublic: true, // TODO: replace with isPublicRoom later
-      
+        isPublic: isPublicRoom, 
         last_message_at: serverTimestamp(),
-        last_message_preview: "New Room",
+        last_message_preview: isPublicRoom ? "New Room" : "", 
         official: false,
-      
-        preview: "https://firebasestorage.googleapis.com/v0/b/bulletiin--with-tiims.appspot.com/o/default-room.png?alt=media"
-});
+        preview: "https://firebasestorage.googleapis.com/v0/b/bulletiin--with-tiims.appspot.com/o/default-room.png?alt=media",
+        ...( !isPublicRoom && { passwordHash: hash2 } ) 
+      });
+
+      if (!isPublicRoom && hash1) {
+        const keyringRef = doc(db, "users", user.uid, "keys", customDocId);
+        await setDoc(keyringRef, {
+          key: hash1,
+          addedAt: serverTimestamp()
+        });
+      }
 
       setActiveRoom(customDocId);
-
       handleClose();
 
     } catch (error) {
@@ -105,18 +122,33 @@ export default function CreateRoomModal({ isOpen, onClose, user, setActiveRoom, 
           </div>
 
           <div className="form-group checkbox-group">
-            <label style={{ opacity: 0.6, cursor: "not-allowed" }}>
+            <label>
               <input 
                 type="checkbox" 
-                checked={true}
-                disabled //TODO {private rooms}: remove
-                //onChange={(e) => setIsPublicRoom(e.target.checked)}//TODO {private rooms} uncomment
+                checked={isPublicRoom}
+                onChange={(e) => setIsPublicRoom(e.target.checked)}
               />
               Public
             </label>
           </div>
 
-          <input type="hidden" name="additionalUsers" value="" />
+          {!isPublicRoom && (
+            <div className="form-group">
+              <label>Room Password:</label>
+              <input 
+                type="text" 
+                value={roomPassword}
+                onChange={(e) => {
+                  setRoomPassword(e.target.value);
+                  setErrorMsg("");
+                }}
+                placeholder="Make it memorable..."
+              />
+              <small style={{display: 'block', marginTop: '4px', opacity: 0.7}}>
+                Passwords cannot be changed later.
+              </small>
+            </div>
+          )}
 
           <div className="modal-actions">
             <button type="button" className="cancel-btn" onClick={handleClose}>
