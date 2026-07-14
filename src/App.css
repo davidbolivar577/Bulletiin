@@ -35,16 +35,14 @@ button {
 
 /*This holds the list of chat rooms*/
 .sidebar {
-  flex: 0 0 25%;
-  /* border-right: 1px solid black; */
-  /* padding: 20px; */
-  background-color: #52837c;
+  display: flex;
+  flex-direction: column;
   height: 100dvh;
-  overflow-x: hidden;
-  overflow-y: auto;
+  width: 320px;
+  background: #ececec;
+  padding: 20px 10px 0px 20px;
+  overflow: hidden;
 }
-
-
 
 .channelControls {
   justify-self: flex-end;
@@ -347,30 +345,31 @@ button {
 
 /* search/filter bar styles for the sidebar */
 .topBar {
+  flex: 0 0 auto;   /* don't grow, don't shrink, size to content */
+  /* remove height: 13dvh; */
   width: 100%;
-  /* margin-bottom: 15px; */
   display: flex;
   flex-direction: column;
   padding-right: 10px;
-  height: 13dvh;
+  /* border-bottom: 1px solid grey; */
+}
+
+.user-info {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 10px 15px 0;
 }
 
 .room-list {
+  flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 36px;
   overflow-y: auto;
-  height: 74dvh;
-  padding: 10px 10px 0px 0px;
-}
-
-.user-info {
-  display: flex;
-  /* flex-direction: column; */
-  align-items: center;
-  justify-content: center;
-  height: 10dvh;
-  margin-right: 10px;
+  padding: 10px 10px 0px 10px;
 }
 
 .room-card {
