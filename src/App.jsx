@@ -428,7 +428,8 @@ function App() {
             ))}
           </div>
           <div className="user-info">
-            <p className="user-name">Logged in as: {dbUser?.displayName || user.displayName || "Unknown"}</p>
+            <img src={dbUser?.avatarUrl || user.photoURL || defaultPfp} alt="profile" className="pfp" referrerPolicy="no-referrer" />
+            <p className="user-name">{dbUser?.displayName || user.displayName || "Unknown"}</p>
             {/* <p className="user-email">{user.email}</p> */}
             <form className="logout-form" onSubmit={(e) => { e.preventDefault(); handleLogout(); }}>
               <button className="LogoutButton" onClick={handleLogout}>Logout</button>

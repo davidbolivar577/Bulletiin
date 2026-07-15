@@ -51,6 +51,7 @@ button {
   align-items: center;
   justify-content: center;
   padding-bottom: 7px;
+  border-bottom: 1px solid grey;
 }
 
 .search-bar, .create-room {
@@ -394,12 +395,23 @@ button {
   /* border-bottom: 1px solid grey; */
 }
 
+.user-name {
+  text-align: left;
+  align-self: flex-end;
+  line-height: 1rem;
+}
+
 .user-info {
+  margin-right: 10px;
+  border-top: 1px solid grey;
+  gap: 7px;
   flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 15px 10px 15px 0;
+  padding: 15px 0px 15px 0;
+  color: black;
+  font-style: italic;
 }
 
 .room-list {
@@ -419,7 +431,6 @@ button {
   word-break: break-word;
   hyphens: auto;
   -webkit-hyphens: auto;
-  overflow: hidden;
   width: 100%;
   border: none;
   border-radius: 14px;
@@ -431,6 +442,7 @@ button {
   text-align: left;
   box-shadow: 0 3px 8px rgba(0,0,0,.12);
   transition: .2s;
+  max-height: 200px;
 }
 
 .room-card:hover {
@@ -452,6 +464,8 @@ button {
   font-weight:700;
   color:#333;
   text-align: left;
+  overflow: auto;
+  max-height: 50px;
 }
 
 .room-lock{
@@ -569,7 +583,7 @@ button {
     transition: box-shadow 0.1s ease, border 0.1s ease, color 0.1s ease;
   }
   .inputAndButton button {
-    width: 10%;
+    /* width: 10%; */
     border-radius: 0px 100px 100px 0px;
     width: 15%;
     border-radius: 10px;
@@ -735,6 +749,12 @@ button {
   cursor: not-allowed;
 }
 /* #endregion */
+
+@media (max-width: 930px) {
+  .inputAndButton button {
+    width: 25%;
+  }
+}
 
 @media (max-width: 700px) {
   /* Show the header with the hamburger button */
