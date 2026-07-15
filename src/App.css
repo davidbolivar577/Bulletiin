@@ -331,6 +331,46 @@ button {
   padding: 20px 10px 0px 20px;
 }
 
+.room-footer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.room-card.active.owned .delete-room-btn {
+  margin-right: 2px;
+  padding: 0px;
+  display: inline-flex;
+  align-self: flex-end;
+  align-items: center;
+  justify-content: center;
+  /* height: auto; */
+  border-radius: 20px;
+  border: 1px solid black;
+}
+
+.delete-room-btn:hover {
+  /* transform: scale(1.1); */
+  background-color: rgb(0, 0, 0);
+}
+
+.delete-room-btn:hover .delete-room-img {
+  /* filter: invert(); */
+  transform: scale(.9);
+}
+
+.delete-room-img {
+  transition: transform 0.15s ease;
+}
+
+.delete-room-btn {
+  background-color: red;
+  display: none;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.delete-room-img {
+  width: 23px;
+}
 
 .sidebar-title {
   text-align: center;
@@ -373,40 +413,49 @@ button {
 }
 
 .room-card {
-    width: 100%;
-    border: none;
-    border-radius: 14px;
-    background: white;
-    padding: 16px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    box-shadow: 0 3px 8px rgba(0,0,0,.12);
-    transition: .2s;
+  overflow-wrap: break-word; 
+  word-break: break-word;
+  overflow-wrap: break-word; 
+  word-break: break-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  overflow: hidden;
+  width: 100%;
+  border: none;
+  border-radius: 14px;
+  background: white;
+  padding: 16px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  box-shadow: 0 3px 8px rgba(0,0,0,.12);
+  transition: .2s;
 }
 
 .room-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 12px rgba(0,0,0,.18);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(0,0,0,.18);
 }
 
 .room-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
 }
 
 .room-name{
-    margin:0;
-    font-size:1.15rem;
-    font-weight:700;
-    color:#333;
+  padding: 0px;
+  margin:0;
+  font-size:1.15rem;
+  font-weight:700;
+  color:#333;
+  text-align: left;
 }
 
 .room-lock{
-    font-size:1.3rem;
+  font-size:1.3rem;
 }
 
 /* --- ROOM CARD INFO TEXT --- */
@@ -465,7 +514,6 @@ button {
   font-size: 1rem;
   font-weight: 600;
   color: #333;
-  text-align: center;
 }
 
 .room-card.active .room-preview {

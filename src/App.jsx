@@ -13,6 +13,7 @@ import defaultPfp from './assets/default_pfp.jpg'
 import newImg from './assets/new.png'
 import editImg from './assets/edit.png'
 import trashImg from './assets/trash.png'
+import xImage from './assets/x.png'
 import './App.css'
 
 function App() {
@@ -384,7 +385,7 @@ function App() {
             {filteredRooms.map((room) => (
               <button
                 key={room.id}
-                className={`room-card ${room.isPublic ? "public-room" : "private-room"} ${activeRoom === room.id ? "active" : ""}`}
+                className={`room-card ${room.isPublic ? "public-room" : "private-room"} ${activeRoom === room.id ? "active" : ""} ${room.creator === user.uid ? "owned" : ""}`}
                 onClick={() => handleRoomClick(room)}
               >
                 <div className="room-header">
@@ -394,29 +395,35 @@ function App() {
                     {room.isPublic ? "🌐" : "🔒"}
                   </span>
                 </div>
+                <div className="room-footer">
+                  <div className="room-text">
+                    <p className="room-last-message">
+                      {room.last_message_preview ? (
+                        <>
+                          <span className="preview-text">{getDecryptedPreview(room)} </span>
 
-                <p className="room-last-message">
-                  {room.last_message_preview ? (
-                    <>
-                      <span className="preview-text">{getDecryptedPreview(room)}</span>
-                      
-                      {/* ONLY show the timestamp if the room is public or the user has the key */}
-                      {(room.isPublic || keyring[room.id]) && (
-                        <span className="preview-time"> • {formatTimeSince(room.last_message_at)}</span>
+                          {/* ONLY show the timestamp if the room is public or the user has the key */}
+                          {(room.isPublic || keyring[room.id]) && (
+                            <span className="preview-time"> • {formatTimeSince(room.last_message_at)}</span>
+                          )}
+                        </>
+                      ) : (
+                        <span className="preview-empty">No messages yet</span>
                       )}
-                    </>
-                  ) : (
-                    <span className="preview-empty">No messages yet</span>
-                  )}
-                </p>
+                    </p>
 
-                <p className="room-created">
-                  Created: {room.createdOn?.toDate().toLocaleDateString() || "Unknown"}
-                </p>
+                    <p className="room-created">
+                      Created: {room.createdOn?.toDate().toLocaleDateString() || "Unknown"}
+                    </p>
 
-                <p className="room-owner">
-                  Owner: {room.owner || "Unknown"}
-                </p>
+                    <p className="room-owner">
+                      Owner: {room.owner || "Unknown"}
+                    </p>
+                  </div>
+                  <button className="delete-room-btn" onClick={(e) => { e.stopPropagation(); handleDeleteRoom(room.id, room.creator, e); }}>
+                    <img src={xImage} alt="Delete" className="delete-room-img"/>
+                  </button>
+                </div>
               </button>
             ))}
           </div>
