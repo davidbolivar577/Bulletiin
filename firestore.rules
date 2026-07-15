@@ -10,7 +10,7 @@ service cloud.firestore {
       // You can only create/edit your own user document
       allow write: if request.auth != null && request.auth.uid == userId;
       
-      // NEW: THE CLOUD KEYRING
+      // THE CLOUD KEYRING
       // Users have absolute control over their own keys, but no one else can read them.
       match /keys/{keyId} {
       	allow read, write: if request.auth != null && request.auth.uid == userId;
@@ -25,10 +25,14 @@ service cloud.firestore {
       // CREATE: Any logged-in user can create a brand new channel
       allow create: if request.auth != null;
       
-      // UPDATE: Anyone can update a channel (required so users can bump the last_message_at timestamp)
-      allow update: if request.auth != null;
+      // UPDATE: (SECURITY FIX) 
+      // Users can only bump the channel to the top of the list and update the preview.
+      // They cannot change the room name, owner, or public/private status!
+      allow update: if request.auth != null &&
+                    request.resource.data.diff(resource.data).affectedKeys()
+                    .hasOnly(['last_message_at', 'last_message_preview']);
       
-      // NEW: DELETE: ONLY the person who created the room can delete it!
+      // DELETE: ONLY the person who created the room can delete it!
       allow delete: if request.auth != null && request.auth.uid == resource.data.creator;
     }
 
@@ -40,7 +44,7 @@ service cloud.firestore {
         return get(/databases/$(database)/documents/channels/$(channelId)).data;
       }
       
-      // NEW HELPER: Checks if the user has this channel's key in their personal Keyring
+      // HELPER: Checks if the user has this channel's key in their personal Keyring
       function hasKey() {
       	return exists(/databases/$(database)/documents/users/$(request.auth.uid)/keys/$(channelId));
       }
