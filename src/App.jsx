@@ -14,6 +14,7 @@ import newImg from './assets/new.png'
 import editImg from './assets/edit.png'
 import trashImg from './assets/trash.png'
 import xImage from './assets/x.png'
+import logoutImg from './assets/logout.png'
 import './App.css'
 
 function App() {
@@ -432,7 +433,7 @@ function App() {
             <p className="user-name">{dbUser?.displayName || user.displayName || "Unknown"}</p>
             {/* <p className="user-email">{user.email}</p> */}
             <form className="logout-form" onSubmit={(e) => { e.preventDefault(); handleLogout(); }}>
-              <button className="LogoutButton" onClick={handleLogout}>Logout</button>
+              <button className="LogoutButton" onClick={handleLogout}><img src={logoutImg} alt="Logout" /></button>
             </form>
           </div>
         </div>
