@@ -50,7 +50,7 @@ button {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  padding-bottom: 7px;
+  /*padding-bottom: 7px;*/
   /* border-bottom: 1px solid grey; */
 }
 
@@ -89,6 +89,9 @@ button {
 /*Spacing for the chat; this is also where the chat messages will be shown */
 .chat-messages {
   flex: 1;
+  background:
+  repeating-conic-gradient(#e6e6e6 0% 25%, #eee 0% 50%) 50%;
+  background-size: 120px 120px;
   padding: 20px;
   overflow-y: auto;
   display: flex;
@@ -99,19 +102,20 @@ button {
 
 /* styles for specifically the message of each chat bubble */
 .message-bubble {
-  background: #e0e0e0;
+  /*background: #e0e0e0;*/
   color: black;
   border-radius: 10px;
   max-width: 60%;
+  gap: 20px;
   overflow-wrap: break-word; 
   word-break: break-word;
   overflow-wrap: break-word; 
   word-break: break-word;
   hyphens: auto;
   -webkit-hyphens: auto;
-  overflow: hidden;
+  /*overflow: hidden;*/
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   z-index: 10;
   
   transition: transform 0.1s ease, box-shadow 0.1s ease;
@@ -215,18 +219,27 @@ button {
 /* User's messages */
 .message-container.sent {
   align-items: flex-end;
+  background-color: transparent;
 }
 .message-container.sent .message-bubble {
-  background-color: #4ebcff;
+  /*background-color: #4ebcff;*/
   display: flex;
   flex-direction: row-reverse;
+  justify-content: flex-start;
+  justify-items: flex-start;
   /* align-items: center; */
 }
 .message-container.sent .pfp {
+  justify-self: flex-start;
   height: 30px;
-  margin: 0px 0px 0px 4px;
-  border-radius: 20px;
+  margin: 10px 0px 0px 4px;
+  border-radius: 5px;
+    border-radius: 5px;
+  border-style: solid;
+  border-color: #8c8c8c;
+  border-width: 2px;
   flex-shrink: 0;
+  background: transparent;
 }
 
 /* Other people's messages */
@@ -234,15 +247,19 @@ button {
   align-items: flex-start;
 }
 .message-container.received .message-bubble {
-  background-color: #8b8b8b;
+  /*background-color: #8b8b8b;*/
   display: flex;
   flex-direction: row;
+  background: transparent;
   /* align-items: center; */
 }
 .message-container.received .pfp {
   height: 30px;
-  margin: 0px 4px 0px 0px;
-  border-radius: 20px;
+  margin: 10px 4px 0px 0px;
+  border-radius: 5px;
+  border-style: solid;
+  border-color: #8c8c8c;
+  border-width: 2px;
   flex-shrink: 0;
 }
 
@@ -260,6 +277,7 @@ button {
   margin: 0px 0px 0px 4.5px;
 }
 .message-bar {
+  display: hidden;
   align-self: stretch;
 }
 
@@ -287,11 +305,37 @@ button {
 .message-text {
   flex: 1;
   min-width: 0;
-  overflow: hidden;
+  /*overflow: hidden;*/
+  position: relative;
 
+  border-style: solid;
+  border-width: 1px;
+  border-color: #8c8c8c;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
+  background-color: whitesmoke;
+  padding: 30px;
+  border-radius: 10px;
 }
+
+.message-container.sent .message-text {
+  background-color: #ffffe3;
+}
+
+/*.message-text:after {
+	content: '';
+	position: absolute;
+	right: 0;
+	top: 3px;
+	width: 0;
+	height: 0;
+	border: 10px solid transparent;
+	border-left-color: red;
+	border-right: 0;
+	margin-top: 20px;
+	margin-right: -3px;
+}*/
 
 .message-container:not(.last-in-string) i {
   display: none;
@@ -306,6 +350,66 @@ button {
   /* line-height: 1px; */
   margin: 0px;
   padding: 0px;
+}
+.message-container.sent .message-text:before {
+  display: block;
+	content: '';
+	position: absolute;
+	right: 0;
+	top: 3px;
+	width: 0;
+	height: 0;
+	border: 11px solid transparent;
+	border-left-color: #8c8c8c;
+	border-right: 0;
+	margin-top: 9px;
+	margin-right: -11px;
+}
+
+.message-container.message-container.received .message-text:before {
+  display: block;
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 3px;
+	width: 0;
+	height: 0;
+	border: 11px solid transparent;
+	border-right-color: #8c8c8c;
+	border-left: 0;
+	margin-top: 9px;
+	margin-left: -11px;
+}
+
+.message-container.sent .message-text:after {
+  display: block;
+	content: '';
+	position: absolute;
+	right: 0;
+	top: 3px;
+	width: 0;
+	height: 0;
+	border: 10px solid transparent;
+	border-left-color: #ffffe3;
+	border-right: 0;
+	margin-top: 10px;
+	margin-right: -10px;
+}
+
+
+.message-container.message-container.received .message-text:after {
+  display: block;
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 3px;
+	width: 0;
+	height: 0;
+	border: 10px solid transparent;
+	border-right-color: whitesmoke;
+	border-left: 0;
+	margin-top: 10px;
+	margin-left: -10px;
 }
 
 /*Message input area; this is where a chat box will be created for user input. */
@@ -430,6 +534,7 @@ button {
   border-style: solid;
   border-width: 5px;
   border-color: #616d64;
+  background-color: whitesmoke;
   /* background-image: linear-gradient(to top, #93ef93, #ffffff); */
 }
 
@@ -438,9 +543,9 @@ button {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 36px;
+  /*gap: 36px;*/
   overflow-y: auto;
-  padding: 10px 10px 10px 20px;
+  /*padding: 10px 10px 10px 20px;*/
 }
 
 .room-card {
@@ -452,7 +557,7 @@ button {
   -webkit-hyphens: auto;
   width: 100%;
   border: none;
-  border-radius: 14px;
+  /*border-radius: 14px;*/
   background: white;
   padding: 16px;
   cursor: pointer;
@@ -462,6 +567,8 @@ button {
   box-shadow: 0 3px 8px rgba(0,0,0,.12);
   transition: .2s;
   max-height: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .room-card:hover {
@@ -470,10 +577,15 @@ button {
 }
 
 .room-header{
+  width: 100%;
   display:flex;
-  justify-content:space-between;
+  justify-content: space-between;
   align-items:center;
   margin-bottom:12px;
+}
+
+.room-footer {
+  text-overflow: ellipsis;
 }
 
 .room-name{
@@ -487,8 +599,9 @@ button {
   max-height: 50px;
 }
 
-.room-lock{
-  font-size:1.3rem;
+.room-lock img {
+  width: 20px;
+  height: 20px;
 }
 
 /* --- ROOM CARD INFO TEXT --- */
@@ -499,23 +612,28 @@ button {
   color: #666;
   margin: 4px 0 0 0;
   text-align: left;
+  text-overflow: ellipsis;
 }
 
 .room-last-message {
   display: flex;
   align-items: center;
   width: 100%;
+  text-overflow: ellipsis;
 }
 
 .preview-text {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-right: 10px;
+
 }
 
 .preview-time {
   white-space: nowrap;
   flex-shrink: 0;
+  text-overflow: ellipsis;
 }
 
 .preview-empty {
@@ -804,7 +922,6 @@ button {
   /* Prevent the chat messages from getting hidden under the new header */
   .main-chat {
     width: 100%; /* Take up the full screen when sidebar is hidden */
-  }
 }
 
 /*Logout Button Styles*/

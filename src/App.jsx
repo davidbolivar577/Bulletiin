@@ -17,6 +17,10 @@ import xImage from './assets/x.png'
 import logoutImg from './assets/logout.png'
 import './App.css'
 
+import padlock from './assets/padlock.svg'
+import globe from './assets/Globe_icon.svg'
+
+
 function App() {
   // Mobile sidebar toggle state
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -393,7 +397,7 @@ function App() {
                   <h3 className="room-name">{room.name}</h3>
 
                   <span className="room-lock">
-                    {room.isPublic ? "🌐" : "🔒"}
+                    {room.isPublic ? <img src={globe} alt="globe"></img> : <img src={padlock} alt="padlock"></img>}
                   </span>
                 </div>
                 <div className="room-footer">
@@ -473,7 +477,7 @@ function App() {
                 <div className="bubbleAndActions">
                   <div className={`message-bubble`}>
                     <img src={msg.pfp || defaultPfp} alt="profile" className="pfp" referrerPolicy="no-referrer" />
-                    <div className="message-bar"></div>
+                    {/*<div className="message-bar"></div>*/}
                         <span className="message-text">
                           {editingMessageId === msg.id ? (
                             <div className="edit-area">
