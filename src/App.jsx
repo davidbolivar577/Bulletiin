@@ -6,11 +6,10 @@ import Login from './components/Login.jsx'
 import CreateRoomModal from './components/CreateRoomModal.jsx'
 
 import { db } from "./firebase.js";
-import { collection, serverTimestamp, query, orderBy, limit, limitToLast, onSnapshot, doc, getDoc, getDocs, updateDoc, writeBatch, where, or, deleteDoc, setDoc } from "firebase/firestore";
+import { collection, serverTimestamp, query, orderBy, limit, limitToLast, onSnapshot, doc, getDoc, getDocs, updateDoc, writeBatch, where, deleteDoc, setDoc } from "firebase/firestore";
 import CryptoJS from "crypto-js"; 
 
 import defaultPfp from './assets/default_pfp.jpg'
-import newImg from './assets/new.png'
 import editImg from './assets/edit.png'
 import trashImg from './assets/trash.png'
 import xImage from './assets/x.png'
@@ -39,7 +38,7 @@ function App() {
   // const [lastOldestListMessage, setLastOldestListMessage] = useState(null);
 
   // WIP: this state will be changed based off scroll height (if the user is far enough from the bottom, they won't be scrolled down auatomatically when a message is sent)
-  const [shouldIScroll, setShouldIScroll] = useState(true);
+  const shouldIScroll = useRef(true);
 
   // Holds the ID of the clicked message
   const [selectedMessageId, setSelectedMessageId] = useState(null);
@@ -119,6 +118,11 @@ function App() {
     const messagesRef = collection(db, "channels", activeRoom, "messages");
 
     const assignInitialOldest = async() => {
+      // Update and refresh messages
+      setoldestTimestamp(null);
+      setIsRoomEmpty(false);
+      setMessages([]);
+
       // Message grabbing, and ordering logic
       const q = query(messagesRef, orderBy("timestamp", "asc"), limitToLast(20));
   
@@ -134,13 +138,8 @@ function App() {
       }
     };
 
-      // Update and refresh messages
-      setoldestTimestamp(null);
-      setIsRoomEmpty(false);
-      setMessages([]);
-
-      assignInitialOldest();
-    }, [activeRoom, user]);
+    assignInitialOldest();
+  }, [activeRoom, user]);
 
   useEffect(() => {
     if (!user || !activeRoom || (!oldestTimestamp && !isRoomEmpty)) return;
@@ -205,11 +204,11 @@ function App() {
 
   // conditions (run it when "messages" changes)
   useEffect(() => {
-    if (shouldIScroll) {
-      scrollToBottom();
-    }
-    setShouldIScroll(true);
-  }, [messages]);
+  if (shouldIScroll.current) {
+    scrollToBottom();
+  }
+  shouldIScroll.current = true; 
+}, [messages]);
 
   const formatTimeSince = (timestamp) => {
     if (!timestamp) return "";
@@ -321,14 +320,14 @@ function App() {
         const bytes = CryptoJS.AES.decrypt(room.last_message_preview, secretKey);
         const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
         return decryptedText || "Encrypted text";
-      } catch (e) { return "Encrypted text"; }
+      } catch { return "Encrypted text"; }
     }
     return "Private Room"; 
   };
 
   const messageLoad = async (e) => {
     if (e.target.scrollTop === 0 && oldestTimestamp) {
-      setShouldIScroll(false); // Stop the auto-scroll down
+      shouldIScroll.current = false; // Stop the auto-scroll down
 
       const messagesRef = collection(db, "channels", activeRoom, "messages");
       
