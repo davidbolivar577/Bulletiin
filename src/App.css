@@ -105,7 +105,7 @@ button {
   /*background: #e0e0e0;*/
   color: black;
   border-radius: 10px;
-  max-width: 60%;
+  max-width: 80%;
   gap: 20px;
   overflow-wrap: break-word; 
   word-break: break-word;
@@ -234,12 +234,37 @@ button {
   height: 30px;
   margin: 10px 0px 0px 4px;
   border-radius: 5px;
-    border-radius: 5px;
   border-style: solid;
   border-color: #8c8c8c;
   border-width: 2px;
   flex-shrink: 0;
   background: transparent;
+}
+
+.message-container.sent:not(.last-in-string) .pfp-replacement {
+  justify-self: flex-start;
+  height: 30px;
+  width: 30px;
+  margin: 10px 0px 0px 4px;
+  flex-shrink: 0;
+  background: transparent;
+}
+
+.message-container.sent:not(.last-in-string) {
+  padding-right: 20px;
+}
+
+.message-container.received:not(.last-in-string) .pfp-replacement {
+  justify-self: flex-start;
+  height: 30px;
+  width: 30px;
+  margin: 10px 0px 0px 4px;
+  flex-shrink: 0;
+  background: transparent;
+}
+
+.message-container.received:not(.last-in-string) {
+  padding-left: 20px;
 }
 
 /* Other people's messages */
@@ -254,7 +279,7 @@ button {
   /* align-items: center; */
 }
 .message-container.received .pfp {
-  height: 30px;
+  width: 30px;
   margin: 10px 4px 0px 0px;
   border-radius: 5px;
   border-style: solid;
@@ -296,7 +321,8 @@ button {
 /* the little username tag underneath the bubble */
 .sent-by {
   font-size: smaller;
-  color: white;
+  color: rgb(48, 48, 48);
+  /* text-shadow: 0px 0px 2px rgb(148, 148, 148); */
   margin: 5px 0px 0px 0px;
   padding: 0px;
   /* line-height: 5px; */
@@ -337,9 +363,10 @@ button {
 	margin-right: -3px;
 }*/
 
-.message-container:not(.last-in-string) i {
+.message-container:not(.last-in-string) i, .message-container:not(.last-in-string) .message-bubble .pfp {
   display: none;
 }
+
 .message-container.last-in-string {
   /* line-height: 1px; */
   /* margin: 0px; */
@@ -351,7 +378,15 @@ button {
   margin: 0px;
   padding: 0px;
 }
-.message-container.sent .message-text:before {
+.message-container.sent.last-in-string .sent-by {
+  /* line-height: 1px; */
+  margin-right: 85px;
+}
+.message-container.received.last-in-string .sent-by {
+  /* line-height: 1px; */
+  margin-left: 85px;
+}
+.message-container.sent.last-in-string .message-text:before {
   display: block;
 	content: '';
 	position: absolute;
@@ -366,7 +401,7 @@ button {
 	margin-right: -11px;
 }
 
-.message-container.message-container.received .message-text:before {
+.message-container.received.last-in-string .message-text:before {
   display: block;
 	content: '';
 	position: absolute;
@@ -381,7 +416,7 @@ button {
 	margin-left: -11px;
 }
 
-.message-container.sent .message-text:after {
+.message-container.sent.last-in-string .message-text:after {
   display: block;
 	content: '';
 	position: absolute;
@@ -397,7 +432,7 @@ button {
 }
 
 
-.message-container.message-container.received .message-text:after {
+.message-container.received.last-in-string .message-text:after {
   display: block;
 	content: '';
 	position: absolute;
@@ -417,7 +452,7 @@ button {
   height: 120px;
   padding: 20px;
   background-color: #ececec;
-  border-top: 1px solid black;
+  border-top: 1px solid grey;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -566,8 +601,9 @@ button {
   text-align: left;
   box-shadow: 0 3px 8px rgba(0,0,0,.12);
   transition: .2s;
-  max-height: 200px;
-  overflow: hidden;
+  /* height: 500px; */
+  /* overflow-x: hidden; */
+  /* overflow-y: visible; */
   text-overflow: ellipsis;
 }
 
@@ -627,7 +663,7 @@ button {
   overflow: hidden;
   text-overflow: ellipsis;
   margin-right: 10px;
-
+  max-width: 150px;
 }
 
 .preview-time {
@@ -716,6 +752,8 @@ button {
     z-index: 10;
     /* border-right: none; */
     opacity: 75%;
+    margin-right: 1px;
+    padding-right: 10px;
 
     transition: box-shadow 0.1s ease, border 0.1s ease, color 0.1s ease;
   }
@@ -922,6 +960,7 @@ button {
   /* Prevent the chat messages from getting hidden under the new header */
   .main-chat {
     width: 100%; /* Take up the full screen when sidebar is hidden */
+  }
 }
 
 /*Logout Button Styles*/

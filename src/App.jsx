@@ -476,6 +476,7 @@ function App() {
                 <div className="bubbleAndActions">
                   <div className={`message-bubble`}>
                     <img src={msg.pfp || defaultPfp} alt="profile" className="pfp" referrerPolicy="no-referrer" />
+                    <div className="pfp-replacement"></div>
                     {/*<div className="message-bar"></div>*/}
                         <span className="message-text">
                           {editingMessageId === msg.id ? (
@@ -514,7 +515,7 @@ function App() {
         </div>
           
         {/* User Input Here: */}
-        <p className="input-prompt">Type your message below:</p>
+        {/* <p className="input-prompt">Type your message below:</p> */}
         <form className="message-input" onSubmit={async (e) => {
           e.preventDefault();
 
