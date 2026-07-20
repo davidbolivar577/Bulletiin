@@ -11,8 +11,8 @@ import CryptoJS from "crypto-js";
 
 import defaultPfp from './assets/default_pfp.jpg'
 import editImg from './assets/edit.png'
-import trashImg from './assets/trash.png'
-import xImage from './assets/x.png'
+import trashImg from './assets/trash.svg'
+import xImage from './assets/circle-xmark.svg'
 import logoutImg from './assets/logout.png'
 import './App.css'
 

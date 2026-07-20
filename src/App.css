@@ -176,7 +176,8 @@ button {
   background-color: green;
 }
 .deleteMessage {
-  background-color: red;
+  filter: invert();
+  background-color: #00ffffed;
 }
 
 .message-container.sent .message-bubble:hover {
@@ -485,12 +486,7 @@ button {
   justify-content: center;
   /* height: auto; */
   border-radius: 20px;
-  border: 1px solid black;
-}
-
-.delete-room-btn:hover {
-  /* transform: scale(1.1); */
-  background-color: rgb(0, 0, 0);
+  border: none;
 }
 
 .delete-room-btn:hover .delete-room-img {
@@ -503,7 +499,7 @@ button {
 }
 
 .delete-room-btn {
-  background-color: red;
+  background-color: rgba(255, 0, 0, 0);
   display: none;
   transition: transform 0.15s ease, background-color 0.15s ease;
 }
