@@ -105,7 +105,7 @@ button {
   /*background: #e0e0e0;*/
   color: black;
   border-radius: 10px;
-  max-width: 80%;
+  max-width: 90%;
   gap: 7px;
   overflow-wrap: break-word; 
   word-break: break-word;
@@ -133,6 +133,8 @@ button {
   gap: 5px;
   transition: transform 0.1s ease;
   animation: slideIn 0.1s ease;
+  /* z-index: -1; */
+  align-self: center;
 }
 @keyframes slideIn {
   from {
@@ -151,6 +153,13 @@ button {
   outline: none;
   padding: 5px;
 }
+/* .editMessage img {
+  padding: 6px;
+}
+.deleteMessage img {
+  padding: 5px;
+} */
+
 .editMessage:hover {
   transform: scale(1.125);
   /* margin-right: 3px; */
@@ -169,31 +178,28 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.1s ease;  
+  transition: transform 0.15s ease;  
   border: none;
 }
 .editMessage {
+  display: flex;
   background-color: green;
 }
 .deleteMessage {
-  filter: invert();
-  background-color: #00ffffed;
+  background-color: red;
 }
 
-.message-container.sent .message-bubble:hover {
-  transform: scale(1.005) translateX(-2px);
+.message-container.sent .message-text:hover {
+  transform: translateX(-2px);
   /* box-shadow: 0px 0px 2px #4ef3ff; */
 }
-.message-container.sent .message-bubble:hover ~ .message-actions {
-  transform: scale(1.005) translateX(-2px);
+.message-container.sent .message-bubble:has(.message-text:hover) + .message-actions {
+  transform: translateX(-2px);
 }
 
-.message-container.received .message-bubble:hover {
-  transform: scale(1.005) translateX(2px);
+.message-container.received .message-text:hover {
+  transform: translateX(2px);
   /* box-shadow: 0px 0px 2px #ebebeb; */
-  .message-actions {
-    transform: scale(1.005) translateX(-2px);
-  }
 }
 
 /* container for the bubble, and username. default styles */
@@ -230,25 +236,28 @@ button {
   justify-items: flex-start;
   /* align-items: center; */
 }
+.pfp {
+  background-clip: padding-box;
+  
+}
 .message-container.sent .pfp {
   justify-self: flex-start;
-  height: 30px;
-  margin: 10px 0px 0px 4px;
-  border-radius: 5px;
-  border-style: solid;
+  height: 40px;
+  margin: 5px 0px 0px 4px;
+  border-radius: 10px;
+  border: 2px solid transparent;
   border-color: #8c8c8c;
-  border-width: 2px;
   flex-shrink: 0;
-  background: transparent;
+  /* background: transparent; */
 }
 
 .message-container.sent:not(.last-in-string) .pfp-replacement {
   justify-self: flex-start;
-  height: 30px;
-  width: 30px;
+  height: 40px;
+  width: 40px;
   margin: 10px 0px 0px 4px;
   flex-shrink: 0;
-  background: transparent;
+  /* background: transparent; */
 }
 
 .message-container.sent:not(.last-in-string) {
@@ -257,11 +266,11 @@ button {
 
 .message-container.received:not(.last-in-string) .pfp-replacement {
   justify-self: flex-start;
-  height: 30px;
-  width: 30px;
+  height: 40px;
+  width: 40px;
   margin: 10px 0px 0px 4px;
   flex-shrink: 0;
-  background: transparent;
+  /* background: transparent; */
 }
 
 .message-container.received:not(.last-in-string) {
@@ -280,24 +289,21 @@ button {
   /* align-items: center; */
 }
 .message-container.received .pfp {
-  width: 30px;
-  margin: 10px 4px 0px 0px;
-  border-radius: 5px;
-  border-style: solid;
+  height: 40px;
+  margin: 5px 0px 0px 4px;
+  border-radius: 10px;
+  border: 2px solid transparent;
   border-color: #8c8c8c;
-  border-width: 2px;
   flex-shrink: 0;
 }
 
-.message-container.received .message-bar {
-  /* height: 100%; */
+/* .message-container.received .message-bar {
   width: 1px;
   background-color: #a1a0a0;
   margin: 0px 4.5px 0px 0px;
 }
 
 .message-container.sent .message-bar {
-  /* height: 100%; */
   width: 1px;
   background-color: #80ceff;
   margin: 0px 0px 0px 4.5px;
@@ -305,14 +311,13 @@ button {
 .message-bar {
   display: hidden;
   align-self: stretch;
-}
+} */
 
 .bubbleAndActions {
   display: flex;
   flex-direction: row-reverse;
   align-items: center;
   width: 100%;
-  gap: 5px;
 }
 
 .message-container.received .bubbleAndActions {
@@ -344,6 +349,8 @@ button {
   background-color: whitesmoke;
   padding: 30px;
   border-radius: 10px;
+
+  transition: transform 0.1s ease;
 }
 
 .message-container.sent .message-text {
@@ -715,85 +722,91 @@ button {
 }
 
 .inputAndButton {
-    width: 65%;
-    width: 100%;
-    display: flex;
-    /* align-items: center; */
-    justify-content: center;
-    height: 50%;
-    /*background-image: linear-gradient(to bottom, white, green);*/
-    /* background-color: blue; */
-    /* align-self: stretch; */
-    /* border-radius: 1000px; */
-    /* overflow: hidden; */
-  }
-
-  .inputAndButton input {
-    width: 65%;
-    width: 85%;
-    height: fill;
-    padding-left: 17px;
-    border-radius: 100px 0px 0px 100px;
-    border-radius: 10px;
-    /* font-size: x-large; */
-    text-align: start;
-    border-style: solid;
-    border-width: 5px;
-    border-color: #454148ff;
-    /* text-justify:initial; */
-    /* text-wrap: true; */
-    background-color: #ffff;
-    /*background-color: #ffff;*/
-    color: black;
-    z-index: 10;
-    /* border-right: none; */
-    opacity: 75%;
-    margin-right: 1px;
-    padding-right: 10px;
-
-    transition: box-shadow 0.1s ease, border 0.1s ease, color 0.1s ease;
-  }
-  .inputAndButton button {
-    /* width: 10%; */
-    border-radius: 0px 100px 100px 0px;
-    width: 15%;
-    border-radius: 10px;
-    font-size: xx-large;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-right: 6px;
-
-    border-style: solid;
-    border-width: 5px;
-    border-color: #454148ff;
-    color: white;
-    opacity: 60%;
-    background-image: linear-gradient(to top, gray, white);
-    -webkit-text-stroke: 8px #454148ff;
-    paint-order: stroke fill;
-    transition: box-shadow 0.1s ease, border 0.1s ease;
-  }
-
-  .inputAndButton input:focus {
-  .inputAndButton button:active {
-    background-image: linear-gradient(to bottom, gray, white);
-        border-color: black;
-  }
-  /*&.inputAndButton input:focus {
-    box-shadow: 0px 0px 10px black;
-    border: 2px solid rgb(47, 255, 141);
-    border-right: none;
-    outline: none;
-    color: #9b9b9b;
-  }
-  .inputAndButton input:focus ~ button{
-    box-shadow: 0px 0px 10px black;
-    border: 2px solid rgb(47, 255, 141);
-    /* border-left: 2px solid #ffffff; */
-  }
-
-    /* border-left: 2px solid #ffffff; */
+  /* width: 65%; */
+  width: 100%;
+  display: flex;
+  /* align-items: center; */
+  justify-content: center;
+  height: 60%;
+  /*background-image: linear-gradient(to bottom, white, green);*/
+  /* background-color: blue; */
+  /* align-self: stretch; */
+  /* border-radius: 1000px; */
+  /* overflow: hidden; */
+}
+.inputAndButton input {
+  /* width: 65%; */
+  width: 85%;
+  height: fill;
+  padding-left: 17px;
+  border-radius: 100px 0px 0px 100px;
+  border-radius: 10px;
+  /* font-size: x-large; */
+  text-align: start;
+  border-style: solid;
+  border-width: 5px;
+  border-color: #454148ff;
+  /* text-justify:initial; */
+  /* text-wrap: true; */
+  background-color: #ffff;
+  /*background-color: #ffff;*/
+  color: black;
+  z-index: 10;
+  /* border-right: none; */
+  opacity: 75%;
+  margin-right: 1px;
+  padding-right: 10px;
+  transition: transform 0.1s ease, border 0.1s ease, color 0.1s ease, margin 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease;
+}
+.inputAndButton button {
+  /* width: 10%; */
+  border-radius: 0px 100px 100px 0px;
+  width: 15%;
+  border-radius: 10px;
+  font-size: xx-large;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: 6px;
+  border-style: solid;
+  border-width: 5px;
+  border-color: #454148ff;
+  color: white;
+  opacity: 60%;
+  background-image: linear-gradient(to top, gray, white);
+  background-repeat: no-repeat; 
+  -webkit-text-stroke: 8px #454148ff;
+  paint-order: stroke fill;
+  transition: box-shadow 0.1s ease, border 0.1s ease, transform 0.1s ease, margin 0.1s ease;
+}
+.inputAndButton button:hover {
+  transform: scale(1.05);
+  margin-left: 3px;
+}
+.inputAndButton button p {
+  transition: transform 0.1s ease;
+}
+.inputAndButton button:hover p {
+  transform: scale(0.95);
+}
+.inputAndButton input:focus {
+  outline: none;
+  border-color: #42888d;
+  box-shadow: inset 0px 0px 2px black;
+}
+/*&.inputAndButton input:focus {
+  box-shadow: 0px 0px 10px black;
+  border: 2px solid rgb(47, 255, 141);
+  border-right: none;
+  outline: none;
+  color: #9b9b9b;
+}
+.inputAndButton input:focus ~ button{
+  box-shadow: 0px 0px 10px black;
+  border: 2px solid rgb(47, 255, 141);
+  /* border-left: 2px solid #ffffff; */
+/* } */
+  /* border-left: 2px solid #ffffff; */
  /* }*/
 /* ---------------------------------- */
 /* ^ MESSAGE INPUT AND SEND BUTTON ^  */
@@ -968,8 +981,8 @@ button {
 }
 
 .LogoutButton {
-  border-radius: 0px 100px 100px 0px;
   border-radius: 10px;
+  /* overflow: hidden; */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -978,25 +991,32 @@ button {
   border-width: 5px;
   border-style: solid;
   border-color: #454148ff;
-  color: white;
+  color: #454148ff;
   opacity: 60%;
   background-image: linear-gradient(to top, gray, white);
+  background-repeat: no-repeat; 
+
   transition: transform 0.15s ease;
 }
 .LogoutButton img {
-  -webkit-filter: drop-shadow(2px 2px 0 #878589)
-                    drop-shadow(-2px 2px 0 #878589)
-                    drop-shadow(2px -2px 0 #878589)
-                    drop-shadow(-2px -2px 0 #878589);
+  width: 41px;
+  padding: 4px 6px 4px 6px;
+  filter: 
+    drop-shadow(2px 0 0 #565457)
+    drop-shadow(-2px 0 0 #565457)
+    drop-shadow(0 2px 0 #565457)
+    drop-shadow(0 -2px 0 #565457)
 
-    filter: drop-shadow(2px 2px 0 #878589)
-            drop-shadow(-2px 2px 0 #878589)
-            drop-shadow(2px -2px 0 #878589)
-            drop-shadow(-2px -2px 0 #878589);
-  transition: transform 0.15s ease;
+    drop-shadow(1.2px 1.2px 0 #565457)
+    drop-shadow(-1.2px 1.2px 0 #565457)
+    drop-shadow(1.2px -1.2px 0 #565457)
+    drop-shadow(-1.2px -1.2px 0 #565457);
+
+  transition: transform 0.1s ease;
 }
+
 .LogoutButton:hover {
-  background-color: #c2f54a;
+  /* background-color: #c2f54a; */
   transform: scale(1.05);
 }
 .LogoutButton:hover img {

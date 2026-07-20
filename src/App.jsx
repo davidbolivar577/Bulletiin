@@ -10,10 +10,10 @@ import { collection, serverTimestamp, query, orderBy, limit, limitToLast, onSnap
 import CryptoJS from "crypto-js"; 
 
 import defaultPfp from './assets/default_pfp.jpg'
-import editImg from './assets/edit.png'
+import editImg from './assets/file-edit.svg'
 import trashImg from './assets/trash.svg'
 import xImage from './assets/circle-xmark.svg'
-import logoutImg from './assets/logout.png'
+import logoutImg from './assets/logout.svg'
 import './App.css'
 
 import padlock from './assets/padlock.svg'
@@ -562,7 +562,7 @@ function App() {
           <div className="inputAndButton">
             <input value={messageInput} onChange={(e) => setMessageInput(e.target.value)}
               placeholder="Enter your message here..." />
-            <button type="submit">send</button>
+            <button type="submit"><p>send</p></button>
           </div>
         </form>
       </div>
