@@ -952,7 +952,7 @@ button {
   }
 
   .chat-messages {
-    padding: 5px;
+    padding: 0px 3px 0px 3px;
   }
 
   .message-container.sent.last-in-string .sent-by {
@@ -963,14 +963,22 @@ button {
     margin-left: 59px;
   }
 
+  .message-text {
+    font-size: larger;
+  }
+
+  .message-actions {
+    padding-left: 8px;
+  }
+
+  .message-actions * {
+    zoom: 1;
+  }
+
   input, 
   textarea, 
   select {
     font-size: 16px !important;
-  }
-
-  message-text {
-    transition: all 5s ease;
   }
 
   /* Disconnect the sidebar from the normal flow so it floats over the chat */
