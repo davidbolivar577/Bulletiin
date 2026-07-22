@@ -536,6 +536,7 @@ button {
   padding: 0px 10px 0px 10px;
   background-image: linear-gradient(to bottom, lightgreen, white);
   border-bottom: 1px solid grey;
+  padding-bottom: 10px;
 }
 
 .user-name {
