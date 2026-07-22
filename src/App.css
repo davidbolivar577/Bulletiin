@@ -947,6 +947,32 @@ button {
     align-items: center;
   }
 
+  .message-container * {
+    zoom: 0.9; 
+  }
+
+  .chat-messages {
+    padding: 5px;
+  }
+
+  .message-container.sent.last-in-string .sent-by {
+    margin-right: 59px;
+  }
+
+  .message-container.received.last-in-string .sent-by {
+    margin-left: 59px;
+  }
+
+  input, 
+  textarea, 
+  select {
+    font-size: 16px !important;
+  }
+
+  message-text {
+    transition: all 5s ease;
+  }
+
   /* Disconnect the sidebar from the normal flow so it floats over the chat */
   .sidebar {
     position: absolute;
