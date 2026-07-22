@@ -413,7 +413,7 @@ button {
   display: block;
 	content: '';
 	position: absolute;
-	left: 0;
+	left: -1px;
 	top: 3px;
 	width: 0;
 	height: 0;
@@ -428,7 +428,7 @@ button {
   display: block;
 	content: '';
 	position: absolute;
-	right: 0;
+	right: 1px;
 	top: 3px;
 	width: 0;
 	height: 0;
@@ -485,7 +485,7 @@ button {
 }
 
 .room-card.active.owned .delete-room-btn {
-  margin-right: 2px;
+  /* margin-right: 1px; */
   padding: 0px;
   display: inline-flex;
   align-self: flex-end;
@@ -494,15 +494,19 @@ button {
   /* height: auto; */
   border-radius: 20px;
   border: none;
+  width: 20px;
+  height: 20px;
 }
 
 .delete-room-btn:hover .delete-room-img {
   /* filter: invert(); */
-  transform: scale(.9);
+  transform: scale(1.1);
 }
 
 .delete-room-img {
   transition: transform 0.15s ease;
+  width: 20px;
+  height: 20px;
 }
 
 .delete-room-btn {
@@ -974,6 +978,19 @@ button {
 
   .message-actions * {
     zoom: 1;
+  }
+
+  .message-container.sent .message-text:hover {
+    transform: translateX(-3px);
+    /* box-shadow: 0px 0px 2px #4ef3ff; */
+  }
+  .message-container.sent .message-bubble:has(.message-text:hover) + .message-actions {
+    transform: translateX(-3px);
+  }
+
+  .message-container.received .message-text:hover {
+    transform: translateX(3px);
+    /* box-shadow: 0px 0px 2px #ebebeb; */
   }
 
   input, 
